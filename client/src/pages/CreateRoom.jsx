@@ -5,13 +5,14 @@ import socket from "../socket";
 import sendIcon from "../assets/send.png";
 import spotcon from "../assets/spotify.png";
 import { auth } from "../config/firebase"; // <-- add
+import soundManager from "../utils/soundManager";
 
 
 const DEFAULT_PLAYLISTS = {
-  Tamil: "316WvxScpeCbfvWVrTHfPa",
-  Hindi: "4stlIpoPS7uKCsmUA7D8KZ",
   English: "2clGinIH6s1bj2TclAgKzW",
+  Hindi: "4stlIpoPS7uKCsmUA7D8KZ",
   Malayalam: "5tU4P1GOBDBs9nwfok79yD",
+  Tamil: "316WvxScpeCbfvWVrTHfPa",
   Telugu: "1llHjtjECBo12ChwOGe38L",
   Kannada: "6utix5lfPoZkBirWlRujqa"
 };
@@ -54,7 +55,9 @@ const CreateRoom = () => {
     setRoomCode(code);
   }, []);
 
-  const toggleLanguage = (lang) => {
+  const toggleLanguage = async (lang) => {
+    await soundManager.initOnUserInteraction();
+    soundManager.play('blockSelect');
     setSelectedLanguage((prev) => (prev === lang ? "" : lang));
   };
 
@@ -126,10 +129,14 @@ const CreateRoom = () => {
   };
 
   const handleCreateRoom = async () => {
+    await soundManager.initOnUserInteraction();
+    soundManager.play('gameAction');
+    
     // const token = localStorage.getItem("token");
     // const user = JSON.parse(localStorage.getItem("user"));
     const currentUser = auth.currentUser;
     if (!currentUser) {
+      soundManager.play('error');
       alert("Please log in first!");
       navigate("/login");
       return;
@@ -186,7 +193,7 @@ const CreateRoom = () => {
 
       try {
         const doFetch = async (tok) =>
-          fetch("/api/room/create", {
+          fetch("http://localhost:5000/api/room/create", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -272,6 +279,9 @@ const CreateRoom = () => {
 
   // Copy handler with progressive underscore transition then progressive "COPIED" reveal
   const handleCopyCode = async () => {
+    await soundManager.initOnUserInteraction();
+    soundManager.play('success');
+    
     try {
       await navigator.clipboard.writeText(String(roomCode));
     } catch {}
@@ -388,7 +398,11 @@ const CreateRoom = () => {
             <button
               type="button"
               onClick={handleCopyCode}
-              onMouseEnter={() => setShowCopyLabel(true)}
+              onMouseEnter={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('hover');
+                setShowCopyLabel(true);
+              }}
               onMouseLeave={() => setShowCopyLabel(false)}
               onMouseMove={handleMouseMove}
               className="p-2 rounded-md hover:bg-[#FFFB00]/10 focus:outline-none focus:ring-2 focus:ring-[#FFFB00]/40 shrink-0 flex-none transition-colors duration-200 cursor-pointer"
@@ -440,7 +454,15 @@ const CreateRoom = () => {
               <div className="flex items-center gap-3 sm:gap-5">
                 <button
                   className="bg-[#FFFB00] w-10 h-10 sm:w-[51px] sm:h-[51px] font-silkscreen rounded-lg text-black text-xl sm:text-[1.53rem] drop-shadow-[0_0_7px_#FFFB00] cursor-pointer"
-                  onClick={() => ctrl.set(Math.max(1, ctrl.value - 1))}
+                  onClick={async () => {
+                    await soundManager.initOnUserInteraction();
+                    soundManager.play('decrement');
+                    ctrl.set(Math.max(1, ctrl.value - 1));
+                  }}
+                  onMouseEnter={async () => {
+                    await soundManager.initOnUserInteraction();
+                    soundManager.play('hover');
+                  }}
                 >
                   -
                 </button>
@@ -449,7 +471,15 @@ const CreateRoom = () => {
                 </span>
                 <button
                   className="bg-[#FFFB00] w-10 h-10 sm:w-[51px] sm:h-[51px] font-silkscreen rounded-lg text-black text-xl sm:text-[1.53rem] drop-shadow-[0_0_7px_#FFFB00] cursor-pointer"
-                  onClick={() => ctrl.set(Math.min(ctrl.max, ctrl.value + 1))}
+                  onClick={async () => {
+                    await soundManager.initOnUserInteraction();
+                    soundManager.play('increment');
+                    ctrl.set(Math.min(ctrl.max, ctrl.value + 1));
+                  }}
+                  onMouseEnter={async () => {
+                    await soundManager.initOnUserInteraction();
+                    soundManager.play('hover');
+                  }}
                 >
                   +
                 </button>
@@ -532,6 +562,12 @@ const CreateRoom = () => {
           {showCreateBtn && (
             <button
               onClick={handleCreateRoom}
+              onMouseEnter={async () => {
+                if (!isCreating) {
+                  await soundManager.initOnUserInteraction();
+                  soundManager.play('hover');
+                }
+              }}
               disabled={isCreating}
               className={`bg-[#FFFB00] text-black font-silkscreen px-6 py-3 rounded-lg text-base md:text-xl drop-shadow-[0_0_7px_#FFFB00] hover:drop-shadow-[0_0_10px_#FFFB00] w-full md:w-[240px] md:h-14 ${isCreating ? "opacity-60 cursor-not-allowed hover:drop-shadow-none" : "cursor-pointer"}`}
             >
@@ -577,6 +613,10 @@ const CreateRoom = () => {
                   <button
                     key={lang}
                     onClick={() => toggleLanguage(lang)}
+                    onMouseEnter={async () => {
+                      await soundManager.initOnUserInteraction();
+                      soundManager.play('hover');
+                    }}
                     className={`py-2 px-3 sm:py-3 sm:px-4 rounded-lg font-silkscreen text-base sm:text-[1.1rem] border-[3px] transition cursor-pointer ${
                       selectedLanguage === lang
                         ? "text-[#FFFB00] border-[#FFFB00] bg-[#FFFB00]/5 drop-shadow-[0_0_7px_#FFFB00]"
@@ -602,26 +642,8 @@ const CreateRoom = () => {
             </div>
           </div>
         )}
-
-        {/* Add CSS animations */}
-        <style jsx>{`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: scale(0.95) translateY(-10px);
-            }
-            to {
-              opacity: 1;
-              transform: scale(1) translateY(0);
-            }
-          }
-          .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-          }
-        `}</style>
-        </div> 
       </div>
-    // </div>
+    </div>
   );
 };
 

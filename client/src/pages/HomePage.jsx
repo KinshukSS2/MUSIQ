@@ -15,8 +15,8 @@ const HomePage = () => {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
   });
-  const [letters, setLetters] = useState(Array(8).fill(""));
-  const targetWord = "GUESSYNC";
+  const [letters, setLetters] = useState(Array(5).fill(""));
+  const targetWord = "MUSIQ";
   const [movingBlobs, setMovingBlobs] = useState([]);
   const containerRef = useRef(null);
 
@@ -204,9 +204,9 @@ const HomePage = () => {
               <span
                 key={index}
                 className={`transition-all duration-100 ${
-                  index >= 4
+                  index >= 3
                     ? "text-[#FFFB00] drop-shadow-[0_0_5px_#FFFB00]"
-                    : ""
+                    : "text-white"
                 }`}
               >
                 {letter}

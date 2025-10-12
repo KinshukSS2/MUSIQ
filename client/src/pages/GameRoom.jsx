@@ -633,8 +633,9 @@ if (gameOver) {
                 ? `Round Over - Next in ${countdown}s`
                 : `Round ${round} - ${timer}s left`}
             </h2>
-
           </div>
+
+
 <div
   className={`bg-[#2D2D2D]/45 p-4 rounded-lg mb-5 transition-all duration-500 text-center ${
     roundEnded ? "" : "filter blur-md"
@@ -658,13 +659,13 @@ if (gameOver) {
               }`}
             >
               <img
-                src={song?.cover}
+                src={song?.cover || "/logo.png"}
                 className="w-[180px] h-[180px] object-cover grayscale"
                 alt="Blurred cover"
               />
             </div>
             <img
-              src={song?.cover}
+              src={song?.cover || "/logo.png"}
               alt="Album cover"
               crossOrigin="anonymous"
               className={`w-[180px] h-[180px] object-cover shadow-2xl rounded-md transition-all duration-500 ${
@@ -769,15 +770,16 @@ if (gameOver) {
           </button>
         </form>
       </div>
-
+      
+      {/* Hidden iframe for audio playback */}
       <iframe
         ref={audioRef}
         width="0"
         height="0"
+        src="/logo.png"
+        style={{ display: 'none' }}
         allow="autoplay"
-        title="YouTube Audio"
-        className="hidden"
-      ></iframe>
+      />
     </div>
   );
 };

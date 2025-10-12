@@ -21,12 +21,39 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const syncUserWithBackend = async (user, avatar = "") => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch("http://localhost:5000/api/user/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          name: user.displayName || user.email || "User",
+          avatar: avatar || user.photoURL || "",
+        }),
+      });
+
+      if (!response.ok) {
+        console.warn("Failed to sync user with backend:", response.status);
+      }
+    } catch (error) {
+      console.error("Error syncing user with backend:", error);
+    }
+  };
+
   const handleEmailLogin = async () => {
     if (!validateEmailLogin()) return;
 
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const token = await result.user.getIdToken();
+
+      // Sync user with backend
+      await syncUserWithBackend(result.user);
 
       localStorage.setItem("token", token);
       localStorage.setItem(
@@ -73,16 +100,20 @@ const Login = () => {
       const token = await result.user.getIdToken();
       const existingUser = JSON.parse(localStorage.getItem("user"));
 
+      const userAvatar = existingUser?.uid === result.user.uid
+        ? existingUser.avatar
+        : selectedAvatar;
+
+      // Sync user with backend
+      await syncUserWithBackend(result.user, userAvatar);
+
       localStorage.setItem("token", token);
       localStorage.setItem(
         "user",
         JSON.stringify({
           name: result.user.displayName || "Google User",
           uid: result.user.uid,
-          avatar:
-            existingUser?.uid === result.user.uid
-              ? existingUser.avatar
-              : selectedAvatar,
+          avatar: userAvatar,
         })
       );
 

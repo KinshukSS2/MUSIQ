@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react"; // hamburger + close icons
+import { Menu, X, LogOut } from "lucide-react"; // hamburger + close icons
+import { signOut } from "firebase/auth";
+import { auth } from "../../config/firebase";
+import soundManager from "../../utils/soundManager";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -48,6 +51,21 @@ export default function Navbar() {
     };
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await soundManager.initOnUserInteraction();
+      soundManager.play('success');
+      
+      await signOut(auth);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userAvatar");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   // Only show logo on auth pages
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
@@ -57,7 +75,9 @@ export default function Navbar() {
         {/* Logo */}
         <div
           className="flex items-center cursor-pointer"
-          onClick={() => {
+          onClick={async () => {
+            await soundManager.initOnUserInteraction();
+            soundManager.play('navigate');
             setMenuOpen(false);
             navigate("/landing");
           }}
@@ -74,10 +94,7 @@ export default function Navbar() {
         >
           <img src="/logo.png" alt="logo" className="w-10 h-10 mt-1.5" />
           <h1 className="ml-2 text-2xl font-silkscreen">
-            GUES
-            <span className="text-[#FFFB00] drop-shadow-[0_0_5px_#FFFB00]">
-              SYNC
-            </span>
+            <span className="text-white">MUS</span><span className="text-[#FFFB00] drop-shadow-[0_0_5px_#FFFB00]">IQ</span>
           </h1>
         </div>
 
@@ -87,7 +104,15 @@ export default function Navbar() {
             {navItems.map((item) => (
               <button
                 key={item.label}
-                onClick={() => navigate(item.path)}
+                onClick={async () => {
+                  await soundManager.initOnUserInteraction();
+                  soundManager.play('navigate');
+                  navigate(item.path);
+                }}
+                onMouseEnter={async () => {
+                  await soundManager.initOnUserInteraction();
+                  soundManager.play('hover');
+                }}
                 aria-current={isActive(item.path) ? "page" : undefined}
                 className={`relative z-10 after:absolute after:left-0 after:bottom-[-5px] after:h-[2px] after:bg-[#FFFB00] after:shadow-[0_0_10px_#FFFB00] after:transition-all after:duration-300
                   ${isActive(item.path) ? "text-[#FFFB00] after:w-full" : "after:w-0 hover:after:w-full"}`}
@@ -98,11 +123,34 @@ export default function Navbar() {
 
             <img
               src={avatarSrc}
-              onClick={() => navigate("/profile")}
+              onClick={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('click');
+                navigate("/profile");
+              }}
               alt="profile"
               onError={(e) => { e.currentTarget.src = "/avatars/1.png"; }}
               className="w-10 h-10 rounded-full border-[2px] border-[#FFFB00] shadow-[0_0_10px_#FFFB00] cursor-pointer relative z-10"
             />
+
+            <button
+              onClick={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('success');
+                handleLogout();
+              }}
+              onMouseEnter={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('hover');
+              }}
+              className="relative z-10 p-2 text-[#FFFB00] hover:text-[#FFFF00] transition-all duration-300 hover:drop-shadow-[0_0_10px_#FFFB00] group"
+              title="Sign Out"
+            >
+              <LogOut size={22} className="drop-shadow-[0_0_5px_#FFFB00]" />
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black border border-[#FFFB00] text-[#FFFB00] px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                Sign Out
+              </span>
+            </button>
           </div>
         )}
 
@@ -110,7 +158,11 @@ export default function Navbar() {
         {!isAuthPage && (
           <div className="md:hidden">
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
+              onClick={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('click');
+                setMenuOpen(!menuOpen);
+              }}
               className="text-white hover:text-[#FFFB00] transition"
             >
               {menuOpen ? <X size={32} /> : <Menu size={32} />}
@@ -131,9 +183,15 @@ export default function Navbar() {
           {navItems.map((item) => (
             <button
               key={item.label}
-              onClick={() => {
+              onClick={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('navigate');
                 navigate(item.path);
                 setMenuOpen(false);
+              }}
+              onMouseEnter={async () => {
+                await soundManager.initOnUserInteraction();
+                soundManager.play('hover');
               }}
               aria-current={isActive(item.path) ? "page" : undefined}
               className={`relative z-10 after:absolute after:left-0 after:bottom-[-5px] after:h-[2px] after:bg-[#FFFB00] after:shadow-[0_0_10px_#FFFB00] after:transition-all after:duration-300
@@ -144,7 +202,9 @@ export default function Navbar() {
           ))}
           <img
             src={avatarSrc}
-            onClick={() => {
+            onClick={async () => {
+              await soundManager.initOnUserInteraction();
+              soundManager.play('click');
               navigate("/profile");
               setMenuOpen(false);
             }}
@@ -152,6 +212,26 @@ export default function Navbar() {
             onError={(e) => { e.currentTarget.src = "/avatars/1.png"; }}
             className="w-12 h-12 rounded-full border-[2px] border-[#FFFB00] shadow-[0_0_10px_#FFFB00] cursor-pointer relative z-10"
           />
+
+          <button
+            onClick={async () => {
+              await soundManager.initOnUserInteraction();
+              soundManager.play('success');
+              handleLogout();
+              setMenuOpen(false);
+            }}
+            onMouseEnter={async () => {
+              await soundManager.initOnUserInteraction();
+              soundManager.play('hover');
+            }}
+            className="relative z-10 p-3 text-[#FFFB00] hover:text-[#FFFF00] transition-all duration-300 hover:drop-shadow-[0_0_15px_#FFFB00] group"
+            title="Sign Out"
+          >
+            <LogOut size={24} className="drop-shadow-[0_0_8px_#FFFB00]" />
+            <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black border border-[#FFFB00] text-[#FFFB00] px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+              Sign Out
+            </span>
+          </button>
         </div>
       )}
     </nav>

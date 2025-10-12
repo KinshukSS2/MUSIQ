@@ -1,19 +1,25 @@
 import React, { useState } from "react";
+import soundManager from "../../utils/soundManager";
 
 const AvatarGrid = ({ selected, onSelect }) => {
   const avatarCount = 11;
   const [highlighted, setHighlighted] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
 
-  const handleSelect = (index) => {
+  const handleSelect = async (index) => {
     if (!isSpinning) {
+      await soundManager.initOnUserInteraction();
+      soundManager.play('click');
       onSelect(`/avatars/${index + 1}.png`);
       setHighlighted(null);
     }
   };
 
-  const randomize = () => {
+  const randomize = async () => {
     if (isSpinning) return;
+
+    await soundManager.initOnUserInteraction();
+    soundManager.play('diceRoll');
 
     setHighlighted(null);
     onSelect(null);

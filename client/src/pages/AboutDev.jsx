@@ -3,7 +3,7 @@ import Navbar from "../components/common/Navbar";
 
 const AboutDev = () => {
   const [displayText, setDisplayText] = useState("");
-  const fullText = "Hey, Developer!";
+  const fullText = "Hey, I'm Kinshuk!";
 
   useEffect(() => {
     let i = 0;
@@ -126,12 +126,12 @@ const AboutDev = () => {
 
             <h2 className="text-sm sm:text-base lg:text-lg mt-2 text-white mb-3 tracking-wider flex items-center gap-2">
               <i className="fas fa-laptop-code text-[#FFFB00]"></i> Developer of{" "}
-              <span className="font-silkscreen">Gues<span className="text-white">sync</span></span>
+              <span className="font-silkscreen"><span className="text-white">MUS</span><span className="text-[#FFFB00]">IQ</span></span>
             </h2>
 
             <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed">
               I'm a full-stack developer who loves crafting playful, real-time web apps.
-              Guessync was built pixel-by-pixel to bring that retro arcade magic back to life,
+              <span className="font-silkscreen"><span className="text-white">MUS</span><span className="text-[#FFFB00]">IQ</span></span> was built pixel-by-pixel to bring that retro arcade magic back to life,
               blending music, fast guessing, and teamwork into pure fun. 🚀
             </p>
 

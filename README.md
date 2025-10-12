@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="./client/src/assets/guessync.gif" alt="Guessync Demo" width="1000" />
+  <img src="./client/src/assets/musiq.gif" alt="MusIQ Demo" width="1000" />
 </p>
 
 <h1 align="center">
-    <img src="./client/public/wordmark.png" alt="Project" height="80" />
+  <img src="./client/public/wordmark.png" alt="MusIQ" height="80" />
 </h1>
 
 <p align="center">
@@ -73,7 +73,7 @@ Follow these steps to run both backend (Express) and frontend (Vite + React) loc
 ### 2) Clone and enter the project
 ```bash
 git clone <your-fork-or-repo-url>
-cd Guessync
+cd MusIQ
 ```
 
 ### 3) Configure environment files
@@ -95,7 +95,7 @@ Copy-Item client/.env.example client/.env
 Now fill the values:
 
 Server (.env):
-- MONGO_URI: Your MongoDB connection string (Atlas or local, e.g. mongodb://127.0.0.1:27017/guessync)
+- MONGO_URI: Your MongoDB connection string (Atlas or local, e.g. mongodb://127.0.0.1:27017/musiq)
 - PORT: 5000 (default)
 - SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET: From Spotify Developer Dashboard
 - YOUTUBE_API_KEY: From Google Cloud Console

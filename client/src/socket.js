@@ -1,9 +1,7 @@
 import { io } from "socket.io-client";
 
-// Connect to the same origin (use local server in development)
-// Previously pointed to the original hosted backend; using relative URL
-// keeps connections local and avoids referencing the original owner's domain.
-const socket = io("/", {
+// Connect to the backend server
+const socket = io("http://localhost:5000", {
   autoConnect: false,
   reconnection: true,
   reconnectionAttempts: Infinity,

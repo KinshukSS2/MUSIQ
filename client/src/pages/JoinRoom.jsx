@@ -139,7 +139,7 @@ export default function JoinRoom() {
 
     try {
       const doFetch = async (tok) =>
-  fetch("/api/room/join", {
+  fetch("http://localhost:5000/api/room/join", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
