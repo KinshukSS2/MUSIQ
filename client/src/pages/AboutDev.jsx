@@ -3,7 +3,7 @@ import Navbar from "../components/common/Navbar";
 
 const AboutDev = () => {
   const [displayText, setDisplayText] = useState("");
-  const fullText = "Hey, I'm Yogesh!👋";
+  const fullText = "Hey, Developer!";
 
   useEffect(() => {
     let i = 0;
@@ -151,24 +151,24 @@ const AboutDev = () => {
           {/* Social + CTA */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-0 mt-6">
             <div className="flex gap-5">
-              <a href="https://yogeshwaran-manivannan.netlify.app/" target="_blank" rel="noopener noreferrer" className="social-icon">
-                <i className="fas fa-globe"></i>
-              </a>
-              <a href="https://github.com/yep-yogesh" target="_blank" rel="noopener noreferrer" className="social-icon">
-                <i className="fab fa-github"></i>
-              </a>
-              <a href="https://www.linkedin.com/in/yogeshwaran-m-3b19452a9/" target="_blank" rel="noopener noreferrer" className="social-icon">
-                <i className="fab fa-linkedin"></i>
-              </a>
-              <a href="https://www.instagram.com/wtfisyogesh" target="_blank" rel="noopener noreferrer" className="social-icon">
-                <i className="fab fa-instagram"></i>
-              </a>
-              <a href="https://leetcode.com/u/yogeshhhhhh/" target="_blank" rel="noopener noreferrer" className="social-icon">
-                <i className="fas fa-code"></i>
-              </a>
-            </div>
+                <a href="#" onClick={(e)=>e.preventDefault()} className="social-icon" title="Portfolio">
+                  <i className="fas fa-globe"></i>
+                </a>
+                <a href="#" onClick={(e)=>e.preventDefault()} className="social-icon" title="GitHub">
+                  <i className="fab fa-github"></i>
+                </a>
+                <a href="#" onClick={(e)=>e.preventDefault()} className="social-icon" title="LinkedIn">
+                  <i className="fab fa-linkedin"></i>
+                </a>
+                <a href="#" onClick={(e)=>e.preventDefault()} className="social-icon" title="Instagram">
+                  <i className="fab fa-instagram"></i>
+                </a>
+                <a href="#" onClick={(e)=>e.preventDefault()} className="social-icon" title="Code profile">
+                  <i className="fas fa-code"></i>
+                </a>
+              </div>
             <a
-              href="https://buymeacoffee.com/yogeshh"
+              href="#"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto bg-[#FFFB00] text-black font-bold px-6 sm:px-8 py-2 rounded-lg hover:bg-black hover:text-[#FFFB00] border-2 border-transparent hover:border-[#FFFB00] transition-all duration-300 text-center"

@@ -1,6 +1,9 @@
 import { io } from "socket.io-client";
 
-const socket = io("https://guessync.onrender.com/", {
+// Connect to the same origin (use local server in development)
+// Previously pointed to the original hosted backend; using relative URL
+// keeps connections local and avoids referencing the original owner's domain.
+const socket = io("/", {
   autoConnect: false,
   reconnection: true,
   reconnectionAttempts: Infinity,

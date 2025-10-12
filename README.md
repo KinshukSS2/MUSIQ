@@ -3,9 +3,7 @@
 </p>
 
 <h1 align="center">
-  <a href="https://guessync.netlify.app/">
-    <img src="./client/public/wordmark.png" alt="Guessync" height="80" />
-  </a>
+    <img src="./client/public/wordmark.png" alt="Project" height="80" />
 </h1>
 
 <p align="center">
@@ -50,9 +48,9 @@
 
 ## Deployment
 
-- **Frontend:** [Guessync on Netlify](https://guessync.netlify.app/)  
-- **Backend:** [Guessync on Render](https://guessync.onrender.com/)  
-- **Database:** MongoDB Atlas
+- Frontend: Local or your chosen hosting (see project README and deploy instructions)
+- Backend: Local or your chosen hosting
+- Database: MongoDB Atlas or local MongoDB
 
 ---
 
@@ -152,7 +150,6 @@ npm run dev
 - CORS error in browser console:
   - The backend only allows these origins by default:
     - http://localhost:5173
-    - https://guessync.netlify.app
   - If your dev URL differs (e.g. 127.0.0.1:5173), add it in server/server.js (allowedOrigins array).
 
 - Rate limiting (HTTP 429):

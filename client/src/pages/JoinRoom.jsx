@@ -139,7 +139,7 @@ export default function JoinRoom() {
 
     try {
       const doFetch = async (tok) =>
-        fetch("https://guessync.onrender.com/api/room/join", {
+  fetch("/api/room/join", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
