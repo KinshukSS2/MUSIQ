@@ -2,206 +2,79 @@
   <img src="https://github.com/user-attachments/assets/f4d7f82f-8d6e-4392-a01e-ff99e1c6bad7" alt="MusIQ Logo" width="400"/>
 </p>
 
-
-
 <p align="center">
-  <b>A full-stack real-time multiplayer music guessing game</b> <br/>
+  <b>MusIQ — A Full-Stack Real-Time Multiplayer Music Guessing Game</b> <br/>
   Compete with friends, guess songs, and use AI-powered hints!
 </p>
 
 ---
 
-## Features
+## 🎵 Overview
 
-- **Spotify playlist integration** for song sourcing  
-- **YouTube audio streaming** for playback  
-- **AI-powered hints** using OpenAI  
-- **Real-time guessing & chat** via Socket.IO  
-- **Typo-tolerant matching** with Fuse.js  
-- **Secure authentication** (Firebase)  
-- **Modern frontend** (React + Vite + Tailwind)  
-- **Leaderboard scoring** in real time  
-- **MongoDB Atlas** for scalable data storage  
+**MusIQ** is a full-stack real-time multiplayer music guessing game where players compete to identify songs as quickly as possible.  
+It integrates **Spotify**, **YouTube**, and **AI-powered hints** for a dynamic and engaging experience.  
+
+Players can join rooms, chat, and earn points in real time — all within a modern, responsive web app.
 
 ---
 
-## Tech Stack
+## 🚀 Features
 
-### Frontend
+- 🎧 **Spotify Playlist Integration** – Source songs from Spotify playlists  
+- ▶️ **YouTube Audio Streaming** – Stream tracks directly from YouTube  
+- 🤖 **AI-Powered Hints** – Get hints powered by Gemini/OpenAI  
+- ⚡ **Real-Time Guessing & Chat** – Powered by Socket.IO  
+- 🔍 **Typo-Tolerant Matching** – Implemented via Fuse.js  
+- 🔐 **Secure Authentication** – Using Firebase Authentication  
+- 💻 **Modern Frontend Stack** – Built with React + Vite + Tailwind CSS  
+- 🏆 **Live Leaderboard** – Real-time score tracking  
+- 🌐 **Scalable Backend** – Node.js, Express.js, MongoDB Atlas  
+
+---
+
+## 🧠 Tech Stack
+
+### **Frontend**
 - React + Vite  
 - Tailwind CSS  
 - Firebase Authentication  
 - Socket.IO Client  
 
-### Backend
+### **Backend**
 - Node.js + Express.js  
 - MongoDB (Mongoose)  
-- Firebase Admin SDK (auth verification)  
+- Firebase Admin SDK  
 - Socket.IO Server  
 - Spotify API + YouTube API  
-- Gemini API (AI hint generation)  
+- Gemini API (AI hints)  
 - Bruno (API testing)  
 
 ---
 
-## Deployment
+## ☁️ Deployment
 
-- Frontend: Local or your chosen hosting (see project README and deploy instructions)
-- Backend: Local or your chosen hosting
-- Database: MongoDB Atlas or local MongoDB
+| Component | Default Port | Suggested Hosting |
+|------------|--------------|-------------------|
+| Frontend   | 5173         | Vercel / Netlify / Local |
+| Backend    | 5000         | Render / Railway / Local |
+| Database   | —            | MongoDB Atlas / Local |
 
 ---
 
-## Local Development (Step-by-step)
+## 🛠️ Local Development
 
-Follow these steps to run both backend (Express) and frontend (Vite + React) locally.
-
-- Backend runs on: http://localhost:5000
-- Frontend runs on: http://localhost:5173
-
-### 1) Prerequisites
+### **1️⃣ Prerequisites**
 - Node.js 18+ and npm (or yarn/pnpm)
-- A MongoDB database (Atlas or local)
-- Firebase project (for Auth)
-- Optional, but recommended:
-  - Spotify API credentials (song sourcing)
-  - YouTube API key (audio)
-  - Gemini/OpenAI key (AI hints)
+- MongoDB (local or Atlas)
+- Firebase project (for authentication)
+- Optional (recommended):
+  - Spotify API credentials  
+  - YouTube API key  
+  - Gemini/OpenAI key  
 
-### 2) Clone and enter the project
+---
+
+### **2️⃣ Clone the Repository**
 ```bash
 git clone <your-fork-or-repo-url>
 cd MusIQ
-```
-
-### 3) Configure environment files
-
-Use the provided examples to create your .env files.
-
-- macOS/Linux:
-```bash
-cp server/.env.example server/.env
-cp client/.env.example client/.env
-```
-
-- Windows PowerShell:
-```powershell
-Copy-Item server/.env.example server/.env
-Copy-Item client/.env.example client/.env
-```
-
-Now fill the values:
-
-Server (.env):
-- MONGO_URI: Your MongoDB connection string (Atlas or local, e.g. mongodb://127.0.0.1:27017/musiq)
-- PORT: 5000 (default)
-- SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET: From Spotify Developer Dashboard
-- YOUTUBE_API_KEY: From Google Cloud Console
-- GEMINI_API_KEY: From Google AI Studio (optional if you won’t use AI hints)
-- Firebase service account:
-  - In Firebase console: Project settings → Service accounts → Generate new private key
-  - Paste fields into .env. Important: keep FIREBASE_PRIVATE_KEY wrapped in quotes and with escaped newlines:
-    FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...your key...\n-----END PRIVATE KEY-----\n"
-
-Client (.env):
-- VITE_FIREBASE_*: From Firebase project settings → General → Your apps (Web app)
-
-Tip: Never commit .env. It’s ignored by .gitignore already.
-
-### 4) Install dependencies
-
-From project root, install in both apps:
-
-```bash
-cd server && npm install
-cd ../client && npm install
-```
-
-### 5) Run backend and frontend
-
-Open two terminals:
-
-- Terminal A (Backend):
-```bash
-cd server
-npm run dev
-# Expect: "Server running on port 5000"
-```
-
-- Terminal B (Frontend):
-```bash
-cd client
-npm run dev
-# Open the shown local URL, usually http://localhost:5173
-```
-
-### 6) Log in and try the app
-- Use Email/Password or Google via Firebase
-- Pick an avatar
-- Create a room or join with a code
-- Open a second browser window to simulate a friend joining
-
----
-
-## Common Issues & Troubleshooting
-
-- CORS error in browser console:
-  - The backend only allows these origins by default:
-    - http://localhost:5173
-  - If your dev URL differs (e.g. 127.0.0.1:5173), add it in server/server.js (allowedOrigins array).
-
-- Rate limiting (HTTP 429):
-  - /api/room/create and /api/auth/login are limited to 5 requests/min (see server/server.js with express-rate-limit).
-  - Wait a minute or increase limits for local dev only.
-
-- Firebase “invalid credential” or “private key” errors:
-  - Ensure FIREBASE_PRIVATE_KEY uses escaped newlines and is wrapped in quotes:
-    "-----BEGIN PRIVATE KEY-----\n...lines...\n-----END PRIVATE KEY-----\n"
-  - Make sure Client VITE_FIREBASE_* matches the same Firebase project.
-
-- MongoDB connection errors:
-  - For Atlas, whitelist your IP or set “Allow access from anywhere”.
-  - Verify MONGO_URI is correct and the cluster is running.
-
-- Vite port already in use:
-  - Run a different port:
-    npm run dev -- --port 5174
-
-- Socket connection issues:
-  - Backend must be running on http://localhost:5000.
-  - Ensure your frontend’s socket base URL matches backend.
-
----
-
-## Scripts
-
-Backend (server/package.json):
-- npm run dev → Nodemon on server.js
-
-Frontend (client/package.json):
-- npm run dev → Vite dev server
-- npm run build → Production build
-
----
-
-## Project Structure (high-level)
-
-- server/ (Express, Socket.IO, MongoDB, Firebase Admin, routes, cron)
-  - server.js (entry)
-  - routes/, sockets/, config/, cronJobs/
-  - .env.example
-- client/ (React + Vite, Tailwind, Firebase Auth, Socket.IO client)
-  - src/pages, src/components, src/assets
-  - vite.config.js, tailwind config
-  - .env.example
-
----
-
-## Contributing
-
-1) Fork the repo  
-2) Create a feature branch  
-3) Commit with clear messages  
-4) Open a PR with a brief description and screenshots if relevant
-
-Thanks for contributing!
