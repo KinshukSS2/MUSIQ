@@ -1,10 +1,8 @@
 <p align="center">
-  <img src="./client/src/assets/musiq.gif" alt="MusIQ Demo" width="1000" />
+  <img src="https://github.com/user-attachments/assets/f4d7f82f-8d6e-4392-a01e-ff99e1c6bad7" alt="MusIQ Logo" width="400"/>
 </p>
 
-<h1 align="center">
-  <img src="./client/public/wordmark.png" alt="MusIQ" height="80" />
-</h1>
+
 
 <p align="center">
   <b>A full-stack real-time multiplayer music guessing game</b> <br/>
