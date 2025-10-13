@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import socket from "../socket";
 import { auth } from "../config/firebase"; // <-- add
+import soundManager from "../utils/soundManager";
 
 export default function JoinRoom() {
   const [code, setCode] = useState("");
@@ -92,19 +93,28 @@ export default function JoinRoom() {
   };
   const handleDisplayMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
 
-  const handleDigit = (digit) => {
+  const handleDigit = async (digit) => {
     if (code.length < 6) {
       setCode((prev) => prev + digit);
       setError("");
+      
+      // Play retro telephone dial sound for the digit
+      await soundManager.init();
+      soundManager.playDigit(digit);
     }
     setActiveButton(digit);
     setTimeout(() => setActiveButton(null), 150);
   };
 
-  const handleBackspace = () => {
+  const handleBackspace = async () => {
     setCode((prev) => prev.slice(0, -1));
     setError("");
     setActiveButton("backspace");
+    
+    // Play error sound for backspace (retro feel)
+    await soundManager.init();
+    soundManager.play('error');
+    
     setTimeout(() => setActiveButton(null), 150);
   };
 

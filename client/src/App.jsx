@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import HowToPlay from "./pages/HowToPlay";
 import HomePage from './pages/HomePage';
 import AboutDev from './pages/AboutDev';
+import TipTheDev from './pages/TipTheDev';
 import SoundToggle from './components/common/SoundToggle';
 
 function App() {
@@ -37,6 +38,7 @@ function InnerApp() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/how-to-play" element={<HowToPlay />} />
         <Route path="/about" element={<AboutDev />} />
+        <Route path="/tip-the-dev" element={<TipTheDev />} />
       </Routes>
       
       {/* Global Sound Toggle */}

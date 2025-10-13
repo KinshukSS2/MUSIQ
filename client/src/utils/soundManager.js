@@ -56,6 +56,9 @@ class SoundManager {
 
     // Decrement sound - downward pitch
     this.sounds.decrement = this.createDecrementSound(sampleRate);
+
+    // Telephone dial sounds for different digits
+    this.sounds.phoneDial = this.createPhoneDialSounds(sampleRate);
   }
 
   // Create a simple beep sound
@@ -269,6 +272,40 @@ class SoundManager {
 
     return buffer;
   }
+
+  // Create retro telephone dial sounds for each digit (DTMF-inspired)
+  createPhoneDialSounds(sampleRate) {
+    const duration = 0.12;
+    const sounds = {};
+
+    // DTMF frequencies for telephone digits (simplified retro version)
+    const dialTones = {
+      '1': [697, 1209], '2': [697, 1336], '3': [697, 1477],
+      '4': [770, 1209], '5': [770, 1336], '6': [770, 1477],
+      '7': [852, 1209], '8': [852, 1336], '9': [852, 1477],
+      '0': [941, 1336]
+    };
+
+    Object.keys(dialTones).forEach(digit => {
+      const length = sampleRate * duration;
+      const buffer = this.audioContext.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+      const [freq1, freq2] = dialTones[digit];
+
+      for (let i = 0; i < length; i++) {
+        const t = i / sampleRate;
+        const envelope = Math.exp(-t * 8) * (1 - Math.exp(-t * 50)); // Attack & decay
+        const tone1 = Math.sin(2 * Math.PI * freq1 * t);
+        const tone2 = Math.sin(2 * Math.PI * freq2 * t);
+        data[i] = (tone1 + tone2) * envelope * 0.15;
+      }
+
+      sounds[digit] = buffer;
+    });
+
+    return sounds;
+  }
+
   async play(soundName) {
     if (!this.enabled || !this.initialized) return;
 
@@ -284,6 +321,25 @@ class SoundManager {
       source.start();
     } catch (error) {
       console.warn('Error playing sound:', error);
+    }
+  }
+
+  // Play telephone dial sound for specific digit
+  async playDigit(digit) {
+    if (!this.enabled || !this.initialized) return;
+
+    try {
+      if (!this.sounds.phoneDial || !this.sounds.phoneDial[digit]) {
+        console.warn(`Phone dial sound for digit '${digit}' not found`);
+        return;
+      }
+
+      const source = this.audioContext.createBufferSource();
+      source.buffer = this.sounds.phoneDial[digit];
+      source.connect(this.audioContext.destination);
+      source.start();
+    } catch (error) {
+      console.warn('Error playing digit sound:', error);
     }
   }
 

@@ -22,7 +22,7 @@ client/.parcel-cache/
 client/build/
 client/.eslintcache
 
-# Editor/IDE folders (optional but useful)
+# Editor/IDE folders -optional but useful
 client/.vscode/
 client/.idea/
 
