@@ -1,10 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
 @import "tailwindcss";
 
+/* Font Family Definitions */
+.font-silkscreen {
+  font-family: "Silkscreen", sans-serif;
+}
 
-@theme {
-    --font-silkscreen: "Silkscreen", sans-serif; 
-  }
+/* Glow Effects */
+.glow-yellow {
+  text-shadow: 
+    0 0 3px #FFFB00,
+    0 0 6px #FFFB00,
+    0 0 9px rgba(255, 251, 0, 0.8);
+}
+
+.shadow-glow-yellow {
+  box-shadow: 
+    0 0 6px rgba(255, 251, 0, 0.3),
+    0 0 12px rgba(255, 251, 0, 0.2),
+    0 0 18px rgba(255, 251, 0, 0.1);
+}
+
+.retro-border {
+  border: 2px solid #FFFB00;
+  border-image: linear-gradient(45deg, #FFFB00, #FFD700, #FFFB00) 1;
+}
+
+.leaderboard-item {
+  background: linear-gradient(135deg, rgba(255, 251, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+  border: 1px solid rgba(255, 251, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.leaderboard-item:hover {
+  background: linear-gradient(135deg, rgba(255, 251, 0, 0.15) 0%, rgba(0, 0, 0, 0.9) 100%);
+  border-color: rgba(255, 251, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(255, 251, 0, 0.15);
+}
+
+.leaderboard-container {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(26, 26, 26, 0.8) 100%);
+  border: 2px solid rgba(255, 251, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
 
 /* Custom Scrollbar Styles */
 .custom-scrollbar {

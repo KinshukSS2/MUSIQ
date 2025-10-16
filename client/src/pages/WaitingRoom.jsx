@@ -217,7 +217,7 @@ const WaitingRoom = () => {
                   className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 rounded-sm"
                   onError={(e) => { e.currentTarget.src = "/avatars/1.png"; }}
                 />
-                <span className={`text-xs sm:text-sm lg:text-base ${p.uid === currentUID ? "text-[#FFFB00]" : ""}`}>
+                <span className={`text-xs sm:text-sm lg:text-base font-silkscreen ${p.uid === currentUID ? "text-[#FFFB00]" : ""}`}>
                   {p.name}
                   {p.uid === hostUID && (
                     <i className="fa-solid fa-crown text-[#FFFB00] ml-3" aria-label="Host" title="Host" />
