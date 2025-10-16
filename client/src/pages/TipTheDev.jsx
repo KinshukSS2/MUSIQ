@@ -240,9 +240,15 @@ const TipTheDev = () => {
               <div className="text-center">
                 <button 
                   onClick={handleBackClick}
-                  className="text-gray-300 hover:text-[#FFFB00] transition-colors coffee-text underline font-medium"
+                  className="group relative bg-gray-800 bg-opacity-80 border-2 border-[#FFFB00] text-[#FFFB00] font-bold px-6 py-3 rounded-xl hover:bg-[#FFFB00] hover:text-black transition-all duration-300 font-silkscreen text-lg hover:scale-105 hover:shadow-lg"
+                  title="Back to About"
                 >
-                  ← Back to About
+                  <span className="flex items-center gap-2">
+                    ← <span className="group-hover:hidden">BACK</span>
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    ← TO ABOUT PAGE
+                  </span>
                 </button>
               </div>
             </div>

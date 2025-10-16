@@ -475,94 +475,149 @@ const GameRoom = () => {
     return <LoadingOverlay text="Starting Game..." />;
   }
 
-if (gameOver) {
-  return (
-    <div className="h-screen bg-black text-white">
-      <Navbar />
+  if (gameOver) {
+    return (
+      <div className="h-screen bg-black text-white relative overflow-hidden">
+        {/* Retro Grid Background */}
+        <div className="absolute inset-0">
+          <div className="retro-grid"></div>
+        </div>
+        
+        <Navbar />
 
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)]">
-        <h2 className="text-3xl font-bold mb-8">Game Over!</h2>
+        <div className="relative z-10 flex flex-col items-center justify-center h-[calc(100vh-4rem)] px-4">
+          <h1 className="text-4xl font-silkscreen mb-8 text-[#FFFB00] tracking-[0.3em]">GAME OVER!</h1>
 
-        <div className="w-64 bg-[#1a1a1ab8] rounded-[20px] p-6 shadow-2xl">
-          <h3 className="text-xl ml-5 mb-4 text-[#FFFB00] font-silkscreen glow-yellow">
-            LEADERBOARD
-          </h3>
-          {leaderboard.map((p, i) => (
-            <div key={i} className="flex justify-between mb-2 items-center">
-              <div className="flex items-center">
-                <div className="w-6 h-6 bg-[#2d2d2d69] rounded-full mr-2"></div>
-                <span className={p.uid === user.uid ? "text-[#FFFB00]" : ""}>
-                  {p.name}
-                </span>
-              </div>
-              <span className="font-bold text-[#FFFB00]">{p.score} pts</span>
+          <div className="border-2 border-[#FFFB00] p-8 bg-transparent w-full max-w-md">
+            <h2 className="text-xl mb-6 text-[#FFFB00] font-silkscreen text-center tracking-[0.2em]">
+              FINAL LEADERBOARD
+            </h2>
+            
+            <div className="space-y-3">
+              {leaderboard.map((p, i) => (
+                <div key={i} className="flex items-center justify-between py-1">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-[#FFFB00] rounded-full flex items-center justify-center text-black font-bold font-silkscreen text-sm">
+                      {i + 1}
+                    </div>
+                    <div>
+                      <span className={`font-silkscreen text-base tracking-wide ${p.uid === user.uid ? "text-[#FFFB00]" : "text-white"}`}>
+                        {p.name.toUpperCase()}
+                      </span>
+                      {p.uid === user.uid && (
+                        <div className="text-xs text-[#FFFB00] font-silkscreen tracking-wide">(YOU)</div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[#FFFB00] font-bold text-lg font-silkscreen">{p.score}</div>
+                    <div className="text-xs text-gray-400 font-silkscreen">POINTS</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div className="mt-8 flex gap-6">
+            <button
+              onClick={() => window.location.href = '/landing'}
+              className="border-2 border-[#FFFB00] text-[#FFFB00] font-bold py-3 px-6 hover:bg-[#FFFB00] hover:text-black transition-all duration-300 font-silkscreen tracking-[0.1em] text-sm hover:scale-105"
+            >
+              GO TO HOME
+            </button>
+            <button
+              onClick={() => window.location.href = '/create-room'}
+              className="bg-[#FFFB00] text-black font-bold py-3 px-6 hover:bg-yellow-300 transition-all duration-300 font-silkscreen tracking-[0.1em] text-sm hover:scale-105"
+            >
+              PLAY AGAIN
+            </button>
+          </div>
         </div>
 
-        <div className="mt-8 flex gap-10">
-          <a
-            href="/landing"
-            className="border-2 border-[#FFFB00] text-white font-bold py-2 px-6 rounded-xl hover:scale-105 transition-transform"
-          >
-            Go to Home
-          </a>
-          <a
-            href="/create-room"
-            className="bg-[#FFFB00] text-black font-bold py-2 px-6 rounded-xl hover:scale-105 transition-transform"
-          >
-            Play Again
-          </a>
-        </div>
+        <style jsx>{`
+          .retro-grid {
+            background-image: 
+              linear-gradient(rgba(255, 251, 0, 0.05) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255, 251, 0, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            animation: grid-move 30s linear infinite;
+          }
+          
+          @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+          }
+        `}</style>
       </div>
-    </div>
-  );
-}
-
-
+    );
+  }
 
   return (
     <div className="h-screen w-screen bg-black text-white pt-5.5 flex overflow-hidden font-montserrat">
-      <div className="w-1/4 h-full mr-0.5 ml-2 mt-3 mb-3 bg-[#1a1a1ab8] p-6 flex flex-col rounded-[20px] shadow-2xl overflow-hidden">
+      <div className="w-1/4 h-full mr-0.5 ml-2 mt-3 mb-3 leaderboard-container p-6 flex flex-col rounded-[20px] shadow-2xl overflow-hidden">
         <div className="mb-8">
-          <h2 className="font-silkscreen text-[#FFFB00] text-xl mb-4 glow-yellow">
+          <h2 className="font-silkscreen text-[#FFFB00] text-xl mb-4 glow-yellow flex items-center gap-2">
             LEADERBOARD 
           </h2>
-          <div className="space-y-3 overflow-y-auto max-h-[40vh] pr-2">
+          <div className="space-y-3 overflow-y-auto max-h-[40vh] pr-2 custom-scrollbar">
             {players
               .sort((a, b) => (b.score || 0) - (a.score || 0))
               .map((p, i) => (
                 <div
                   key={p.uid}
-                  className="flex items-center justify-between bg-[#2d2d2d58] p-3 rounded-lg"
+                  className="leaderboard-item p-4 rounded-lg relative"
                 >
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-[#2d2d2d69] rounded-full mr-3"></div>
-                    <span
-                      className={
-                        p.uid === user.uid ? "text-[#FFFB00]" : "text-white"
-                      }
-                    >
-                      {p.name}
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="relative mr-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-[#FFFB00] to-[#FFD700] rounded-full flex items-center justify-center text-black font-bold text-sm">
+                          {i + 1}
+                        </div>
+                        {i < 3 && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3">
+                            {i === 0 && <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>}
+                            {i === 1 && <div className="w-3 h-3 bg-gray-300 rounded-full"></div>}
+                            {i === 2 && <div className="w-3 h-3 bg-orange-600 rounded-full"></div>}
+                          </div>
+                        )}
+                      </div>
+                      <span
+                        className={`font-silkscreen text-sm ${
+                          p.uid === user.uid ? "text-[#FFFB00] font-bold" : "text-white"
+                        }`}
+                      >
+                        {p.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#FFFB00] font-bold text-lg">
+                        {p.score || 0}
+                      </span>
+                      <span className="text-xs text-gray-400">pts</span>
+                    </div>
                   </div>
-                  <span className="text-[#FFFB00] font-bold">
-                    {p.score || 0}
-                  </span>
+                  {p.uid === user.uid && (
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#FFFB00] to-[#FFD700] rounded-r"></div>
+                  )}
                 </div>
               ))}
           </div>
         </div>
 
         <div className="mt-auto">
-          <div className="flex items-center space-x-2 pl-3 mb-2">
-            <img src="/AI.png" alt="AI Icon" className="w-6 h-6" />
+          <div className="flex items-center space-x-2 pl-3 mb-4">
+            <img src="/AI.png" alt="AI Icon" className="w-8 h-8" />
             <h2 className="font-silkscreen text-[#FFFB00] text-xl glow-yellow">
               IS.AI
             </h2>
           </div>
 
-          <div className="space-y-4 bg-[#2d2d2d58] p-4 rounded-lg shadow-inner">
+          <div className="space-y-3 leaderboard-container p-4 rounded-lg shadow-inner">
             {["movie", "composer", "ai"].map((type) => {
               const icons = {
                 movie: "/film.png",
@@ -580,12 +635,12 @@ if (gameOver) {
                   key={type}
                   onClick={() => handleVote(type)}
                   disabled={hintsUsed[type] || roundEnded}
-                  className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-300 ${
+                  className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-300 font-medium ${
                     voteCounts[type] > 0
-                      ? "bg-[#FFFB00] text-black shadow-glow-yellow"
+                      ? "bg-[#FFFB00] text-black font-bold"
                       : hintsUsed[type] || roundEnded
-                      ? "bg-[#3d3d3d90] cursor-not-allowed opacity-50"
-                      : "bg-[#3d3d3d47] hover:shadow-[0_0_10px_2px_#FFFB00]"
+                      ? "bg-gray-700 cursor-not-allowed opacity-50 text-gray-400"
+                      : "leaderboard-item hover:shadow-lg text-white hover:text-[#FFFB00]"
                   }`}
                 >
                   <span className="flex items-center space-x-3">
@@ -597,7 +652,7 @@ if (gameOver) {
                     <span>{labels[type]}</span>
                   </span>
                   {voteCounts[type] > 0 && (
-                    <span className="text-xs px-2 py-0.5 bg-[#ffffff] rounded-md text-black font-bold">
+                    <span className="text-xs px-2 py-1 bg-black text-[#FFFB00] rounded-full font-bold border border-[#FFFB00]">
                       {voteCounts[type]}
                     </span>
                   )}
@@ -719,30 +774,35 @@ if (gameOver) {
         </div>
       </div>
 
-      <div className="w-1/4 h-full mr-2 ml-0.5 mt-3 mb-3 bg-[#1a1a1ab8] p-6 flex flex-col rounded-[20px] shadow-2xl overflow-hidden">
-        <h2 className="font-silkscreen text-[#FFFB00] text-xl mb-4 border-b border-[#FFFB0030] pb-2 glow-yellow">
+      <div className="w-1/4 h-full mr-2 ml-0.5 mt-3 mb-3 leaderboard-container p-6 flex flex-col rounded-[20px] shadow-2xl overflow-hidden">
+        <h2 className="font-silkscreen text-[#FFFB00] text-xl mb-4 border-b border-[#FFFB00] border-opacity-30 pb-2 glow-yellow flex items-center gap-2">
           GUESS — BOX
         </h2>
 
-        <div className="flex-1 overflow-y-auto pr-2 space-y-3 mb-4">
+        <div className="flex-1 overflow-y-auto pr-2 space-y-3 mb-4 custom-scrollbar">
           {chat.map((message, i) => (
             <div
               key={i}
-              className={`p-3 rounded-lg ${
+              className={`p-3 rounded-lg transition-all duration-300 ${
                 message.system
                 ? message.type === "crct-guess"
-                  ? "text-green-400 border border-green-400 bg-green-400/10 shadow-[0_0_10px_2px_rgba(34,197,94,0.5)]"             
+                  ? "text-green-300 font-bold border border-green-400 bg-green-900 bg-opacity-40 shadow-lg animate-pulse"             
                     : message.type === "ai-hint"
-                    ? "text-purple-300 italic bg-[#2D2D2D]"
-                    : "text-gray-400 italic"
+                    ? "text-purple-300 italic leaderboard-item border-purple-400"
+                    : "text-gray-400 italic bg-gray-800 bg-opacity-50"
                   : message.correct
-                  ? "text-green-400 bg-[#2D2D2D]"
-                  : "bg-[#2D2D2D]"
+                  ? "text-green-300 font-bold leaderboard-item border-green-400 bg-green-900 bg-opacity-20"
+                  : "leaderboard-item text-white"
               }`}
             >
               {message.system
                 ? message.text
-                : `${message.user?.name}: ${message.text}`}
+                : (
+                  <span>
+                    <span className="font-silkscreen text-[#FFFB00]">{message.user?.name}:</span>
+                    <span className="ml-2">{message.text}</span>
+                  </span>
+                )}
             </div>
           ))}
           <div ref={chatEndRef} />
@@ -755,15 +815,15 @@ if (gameOver) {
             onChange={(e) => setGuess(e.target.value)}
             placeholder={correctGuess ? "✅ Correct!" : "Guess the song..."}
             disabled={correctGuess || roundEnded}
-            className="w-full bg-[#2d2d2d58] text-white px-4 py-3 rounded-xl border-2 border-[#FFFB00] mb-3 focus:outline-none focus:ring-2 focus:ring-[#FFFB00]"
+            className="w-full bg-black bg-opacity-50 text-white px-4 py-3 rounded-xl border-2 border-[#FFFB00] border-opacity-60 mb-3 focus:outline-none focus:border-[#FFFB00] focus:border-opacity-100 focus:shadow-lg transition-all backdrop-blur-sm"
           />
           <button
             type="submit"
             disabled={correctGuess || roundEnded}
-            className={`w-full bg-[#FFFB00] text-black font-bold py-3 rounded-xl transition-all ${
+            className={`w-full bg-[#FFFB00] text-black font-bold py-3 rounded-xl transition-all font-silkscreen ${
               correctGuess || roundEnded
                 ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-[#FFFB00CC] shadow-glow-yellow"
+                : "hover:bg-yellow-300 hover:shadow-lg hover:scale-105"
             }`}
           >
             {correctGuess ? "GUESSED!" : "SUBMIT"}
