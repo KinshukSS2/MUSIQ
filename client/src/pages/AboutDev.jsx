@@ -20,7 +20,6 @@ const AboutDev = () => {
   }, []);
 
   const skills = [
-    { name: "Python", icon: "fab fa-python" },
     { name: "JavaScript", icon: "fab fa-js" },
     { name: "HTML5", icon: "fab fa-html5" },
     { name: "CSS3", icon: "fab fa-css3-alt" },
@@ -164,9 +163,10 @@ const AboutDev = () => {
               </div>
             <a
               href="/tip-the-dev"
-              className="w-full sm:w-auto bg-[#FFFB00] text-black font-bold px-6 sm:px-8 py-2 rounded-lg hover:bg-black hover:text-[#FFFB00] border-2 border-transparent hover:border-[#FFFB00] transition-all duration-300 text-center"
+              className="w-full sm:w-auto bg-[#FFFB00] text-black font-bold px-6 sm:px-8 py-3 rounded-lg hover:bg-black hover:text-[#FFFB00] border-2 border-transparent hover:border-[#FFFB00] transition-all duration-300 text-center flex items-center justify-center gap-3 coffee-button"
             >
-              Tip the Dev
+              <img src="/coffee-icon.svg" alt="Buy me a coffee" className="w-6 h-6" />
+              <span>Buy me a coffee</span>
             </a>
           </div>
         </div>
