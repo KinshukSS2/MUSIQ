@@ -116,7 +116,7 @@ const AboutDev = () => {
           />
         </div>
 
-        {/* Info Card */}
+        
         <div className="relative bg-[#0A0A0A] rounded-2xl border-2 sm:border-4 border-[#FFFB00] shadow-lg px-5 sm:px-8 lg:px-10 py-6 sm:py-8 w-full max-w-[550px] lg:max-w-[700px] lg:min-h-[400px] flex flex-col justify-between">
           <div className="text-left">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#FFFB00] mb-2 tracking-wide typing-cursor">
