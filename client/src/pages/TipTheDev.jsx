@@ -8,15 +8,47 @@ const TipTheDev = () => {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [customAmount, setCustomAmount] = useState('');
   const [showThankYou, setShowThankYou] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [wheelRotation, setWheelRotation] = useState(0);
 
   const tipAmounts = [
-    { amount: 50, label: '₹50', desc: 'Coffee ☕' },
-    { amount: 100, label: '₹100', desc: 'Pizza Slice 🍕' },
-    { amount: 250, label: '₹250', desc: 'Meal 🍽️' },
-    { amount: 500, label: '₹500', desc: 'Grocery 🛒' },
-    { amount: 1000, label: '₹1000', desc: 'Big Support 💪' },
-    { amount: 2500, label: '₹2500', desc: 'Super Fan 🌟' }
+    { amount: 50, label: '₹50' },
+    { amount: 100, label: '₹100' },
+    { amount: 250, label: '₹250' },
+    { amount: 500, label: '₹500' },
+    { amount: 1000, label: '₹1000' },
+    { amount: 2500, label: '₹2500' }
   ];
+
+  const wheelAmounts = [25, 50, 75, 100, 150, 200, 250, 300, 500, 750, 1000, 1500, 2000, 2500, 3000, 5000];
+
+  const getTotalAmount = () => {
+    return selectedAmount || parseInt(customAmount) || 0;
+  };
+
+  const handleSpinWheel = async () => {
+    if (isSpinning) return;
+    
+    setIsSpinning(true);
+    await soundManager.init();
+    soundManager.play('click');
+    
+    const randomIndex = Math.floor(Math.random() * wheelAmounts.length);
+    const selectedWheelAmount = wheelAmounts[randomIndex];
+    
+    // Calculate rotation (16 segments, 360/16 = 22.5 degrees per segment)
+    const segmentAngle = 360 / wheelAmounts.length;
+    const targetRotation = wheelRotation + 1440 + (randomIndex * segmentAngle); // 4 full spins + target
+    
+    setWheelRotation(targetRotation);
+    
+    setTimeout(() => {
+      setSelectedAmount(selectedWheelAmount);
+      setCustomAmount('');
+      setIsSpinning(false);
+      soundManager.play('success');
+    }, 3000);
+  };
 
   const handleAmountSelect = async (amount) => {
     await soundManager.init();
@@ -150,107 +182,167 @@ const TipTheDev = () => {
       
       <Navbar />
       
+      {/* Left Arrow Button */}
+      <button 
+        onClick={handleBackClick}
+        className="fixed top-24 left-6 z-20 bg-gray-800 bg-opacity-80 border-2 border-[#FFFB00] text-[#FFFB00] font-bold p-3 rounded-xl hover:bg-[#FFFB00] hover:text-black transition-all duration-300 hover:scale-110 hover:shadow-lg"
+        title="Back to About"
+      >
+        <svg 
+          width="24" 
+          height="24" 
+          viewBox="0 0 24 24" 
+          fill="currentColor"
+        >
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </button>
+      
       <div className="relative z-10 container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-4 mb-6">
               <img src="/coffee-icon.svg" alt="Coffee" className="w-16 h-16 md:w-20 md:h-20" />
-              <h1 className="text-5xl md:text-7xl font-bold text-[#FFFB00] coffee-title-cursive">
-                Buy me a coffee
+              <h1 className="text-4xl md:text-6xl font-bold text-[#FFFB00] font-silkscreen coffee-title-silkscreen">
+                BUY ME A COFFEE
               </h1>
             </div>
-            <p className="text-xl md:text-2xl text-white mb-4 coffee-subtitle font-semibold">
-              Support MusIQ Development
+            <p className="text-lg md:text-xl text-white mb-4 font-silkscreen font-semibold tracking-wide">
+              SUPPORT MUSIQ DEVELOPMENT
             </p>
-            <div className="bg-[#FFFB00] p-4 rounded-lg inline-block">
-              {/* <p className="text-lg text-black font-medium coffee-text animate-pulse">
-                ☕ Help Kinshuk build more awesome features for MusIQ! 🎮🎵
-              </p> */}
-            </div>
           </div>
 
-          {/* Main Container */}
-          <div className="bg-gray-900 bg-opacity-95 border-2 border-[#FFFB00] border-opacity-60 rounded-2xl p-8 shadow-2xl coffee-container backdrop-blur-sm">
+          {/* Main Container - Split Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {/* Amount Selection */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-[#FFFB00] mb-6 text-center coffee-subtitle">
-                ☕ Choose Your Coffee Size
-              </h3>
+            {/* Left Side - Donation Options */}
+            <div className="bg-gray-900 bg-opacity-95 border-2 border-[#FFFB00] border-opacity-60 rounded-2xl p-6 shadow-2xl coffee-container backdrop-blur-sm">
               
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                {tipAmounts.map((tip, index) => (
-                  <button
-                    key={tip.amount}
-                    onClick={() => handleAmountSelect(tip.amount)}
-                    className={`p-6 border-2 rounded-xl transition-all coffee-button relative ${
-                      selectedAmount === tip.amount
-                        ? 'border-[#FFFB00] bg-[#FFFB00] bg-opacity-20 text-[#FFFB00] shadow-lg transform scale-105'
-                        : 'border-gray-600 bg-gray-800 bg-opacity-50 hover:border-[#FFFB00] hover:bg-[#FFFB00] hover:bg-opacity-10 text-white hover:text-[#FFFB00]'
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">☕</div>
-                      <div className="text-xl font-bold coffee-subtitle">{tip.label}</div>
-                      <div className="text-sm text-gray-400 coffee-text">{tip.desc}</div>
-                    </div>
-                    {selectedAmount === tip.amount && (
-                      <div className="absolute -top-2 -right-2 bg-[#FFFB00] text-black rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-                        ✓
+              {/* Amount Selection */}
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {tipAmounts.map((tip, index) => (
+                    <button
+                      key={tip.amount}
+                      onClick={() => handleAmountSelect(tip.amount)}
+                      className={`p-4 border-2 rounded-xl transition-all coffee-button relative ${
+                        selectedAmount === tip.amount
+                          ? 'border-[#FFFB00] bg-[#FFFB00] text-black shadow-lg transform scale-105'
+                          : 'border-gray-600 bg-gray-800 bg-opacity-50 hover:border-[#FFFB00] hover:bg-gray-700 text-white hover:text-white'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-xl mb-1">☕</div>
+                        <div className="text-sm font-bold font-silkscreen">{tip.label}</div>
                       </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom Amount */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-[#FFFB00] mb-4 text-center coffee-subtitle">
-                ☕ Or Choose Custom Amount
-              </h3>
-              <div className="flex justify-center">
-                <div className="relative max-w-xs">
-                  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#FFFB00] text-xl font-bold">
-                    ₹
-                  </span>
-                  <input
-                    type="text"
-                    value={customAmount}
-                    onChange={handleCustomAmountChange}
-                    placeholder="0"
-                    className="w-full pl-10 pr-6 py-4 bg-gray-800 bg-opacity-80 border-2 border-gray-600 rounded-xl text-white placeholder-gray-400 text-xl text-center focus:border-[#FFFB00] focus:outline-none coffee-input font-semibold"
-                    maxLength="5"
-                  />
+                      {selectedAmount === tip.amount && (
+                        <div className="absolute -top-2 -right-2 bg-[#FFFB00] text-black rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-silkscreen">
+                          ✓
+                        </div>
+                      )}
+                    </button>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            {/* Payment Button */}
-            <div className="text-center space-y-6">
-              <button 
-                onClick={handlePayment}
-                disabled={!selectedAmount && !customAmount}
-                className="px-12 py-4 bg-[#FFFB00] text-black font-bold text-xl rounded-xl hover:bg-yellow-300 hover:text-black border-2 border-[#FFFB00] transition-all disabled:opacity-50 disabled:cursor-not-allowed coffee-pay-button flex items-center justify-center gap-3 mx-auto"
-              >
-                ☕ <span>Buy me a coffee</span> ☕
-              </button>
-              
+              {/* Total Amount Display - Now Editable */}
+              <div className="mb-6">
+                <div className="bg-black bg-opacity-50 border border-[#FFFB00] rounded-lg p-4 text-center">
+                  <h4 className="text-sm font-silkscreen text-[#FFFB00] mb-2">TOTAL AMOUNT</h4>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#FFFB00] text-xl font-bold font-silkscreen">
+                      ₹
+                    </span>
+                    <input
+                      type="text"
+                      value={getTotalAmount()}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d*$/.test(value) && parseInt(value) <= 50000) {
+                          setCustomAmount(value);
+                          setSelectedAmount(null);
+                        }
+                      }}
+                      placeholder="0"
+                      className="w-full pl-10 pr-4 py-2 bg-transparent text-[#FFFB00] text-2xl font-bold font-silkscreen text-center focus:outline-none border-none"
+                      maxLength="5"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Button */}
               <div className="text-center">
                 <button 
-                  onClick={handleBackClick}
-                  className="group relative bg-gray-800 bg-opacity-80 border-2 border-[#FFFB00] text-[#FFFB00] font-bold px-6 py-3 rounded-xl hover:bg-[#FFFB00] hover:text-black transition-all duration-300 font-silkscreen text-lg hover:scale-105 hover:shadow-lg"
-                  title="Back to About"
+                  onClick={handlePayment}
+                  disabled={!selectedAmount && !customAmount}
+                  className="w-full px-8 py-3 bg-[#FFFB00] text-black font-bold text-md rounded-xl hover:bg-yellow-300 hover:text-black border-2 border-[#FFFB00] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 font-silkscreen tracking-wide"
                 >
-                  <span className="flex items-center gap-2">
-                    ← <span className="group-hover:hidden">BACK</span>
-                  </span>
-                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    ← TO ABOUT PAGE
-                  </span>
+                  BUY ME A COFFEE
                 </button>
               </div>
+            </div>
+
+            {/* Right Side - Spin the Wheel */}
+            <div className="bg-gray-900 bg-opacity-95 border-2 border-[#FFFB00] border-opacity-60 rounded-2xl p-6 shadow-2xl coffee-container backdrop-blur-sm flex flex-col items-center justify-center">
+              <h3 className="text-lg font-bold text-[#FFFB00] mb-6 text-center font-silkscreen tracking-wide">
+                FEELING LUCKY? SPIN THE WHEEL!
+              </h3>
+              
+              {/* Wheel Container */}
+              <div className="relative mb-6">
+                <div className="relative w-72 h-72 mx-auto">
+                  {/* Wheel */}
+                  <div 
+                    className={`w-full h-full rounded-full border-4 border-[#FFFB00] relative overflow-hidden transition-transform duration-3000 ease-out ${isSpinning ? 'animate-spin-slow' : ''}`}
+                    style={{ transform: `rotate(${wheelRotation}deg)` }}
+                  >
+                    {wheelAmounts.map((amount, index) => {
+                      const angle = (360 / wheelAmounts.length) * index;
+                      const isEven = index % 2 === 0;
+                      return (
+                        <div
+                          key={amount}
+                          className={`absolute w-full h-full ${isEven ? 'bg-[#FFFB00]' : 'bg-gray-800'} opacity-80`}
+                          style={{
+                            transform: `rotate(${angle}deg)`,
+                            clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos((360 / wheelAmounts.length) * Math.PI / 180)}% ${50 - 50 * Math.sin((360 / wheelAmounts.length) * Math.PI / 180)}%)`
+                          }}
+                        >
+                          <div 
+                            className={`absolute top-6 left-1/2 transform -translate-x-1/2 text-sm font-bold font-silkscreen ${isEven ? 'text-black' : 'text-[#FFFB00]'}`}
+                            style={{ transform: `rotate(${(360 / wheelAmounts.length) / 2}deg)` }}
+                          >
+                            ₹{amount}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Pointer */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
+                    <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-[#FFFB00]"></div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleSpinWheel}
+                disabled={isSpinning}
+                className={`px-8 py-3 bg-[#FFFB00] text-black font-bold text-md rounded-xl border-2 border-[#FFFB00] transition-all font-silkscreen tracking-wide ${
+                  isSpinning 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-yellow-300 hover:scale-105'
+                }`}
+              >
+                {isSpinning ? 'SPINNING...' : 'SPIN THE WHEEL'}
+              </button>
+              
+              <p className="text-xs text-gray-400 font-silkscreen mt-3 text-center">
+                LET THE WHEEL DECIDE YOUR DONATION!
+              </p>
             </div>
           </div>
         </div>
@@ -259,16 +351,33 @@ const TipTheDev = () => {
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&family=Kaushan+Script&display=swap');
         
-        .coffee-title-cursive {
-          font-family: 'Kaushan Script', cursive;
+        .coffee-title-silkscreen {
+          font-family: 'Silkscreen', sans-serif;
           font-weight: 400;
-          letter-spacing: 1px;
+          letter-spacing: 2px;
           text-shadow: 
-            0 0 10px rgba(255, 251, 0, 0.8),
-            0 0 20px rgba(255, 251, 0, 0.6),
-            0 0 30px rgba(255, 251, 0, 0.4),
+            0 0 3px rgba(255, 251, 0, 0.4),
+            0 0 6px rgba(255, 251, 0, 0.2),
             2px 2px 4px rgba(0, 0, 0, 0.8);
-          filter: drop-shadow(0 0 8px rgba(255, 251, 0, 0.7));
+          filter: drop-shadow(0 0 2px rgba(255, 251, 0, 0.3));
+        }
+        
+        /* Wheel Animation */
+        .duration-3000 {
+          transition-duration: 3s;
+        }
+        
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        
+        .animate-spin-slow {
+          animation: spin-slow 3s ease-out;
         }
         
         .coffee-title {
