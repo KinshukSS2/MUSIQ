@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -15,9 +16,11 @@ import SoundToggle from './components/common/SoundToggle';
 
 function App() {
   return (
-    <Router>
-      <InnerApp /> 
-    </Router>
+    <AuthProvider>
+      <Router>
+        <InnerApp /> 
+      </Router>
+    </AuthProvider>
   );
 }
 
