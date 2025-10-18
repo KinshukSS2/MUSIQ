@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes.js';
 import roomRoutes from './routes/roomRoutes.js';
 import songRoutes from './routes/songRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import spotifyRoutes from './routes/spotifyRoutes.js';
 import { scheduleRoomCleanup } from "./cronJobs/roomCleanup.js";
 
 dotenv.config();
@@ -50,6 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use("/api/user", userRoutes);
 app.use('/api/room', roomRoutes);
 app.use('/api/song', songRoutes);
+app.use('/api/spotify', spotifyRoutes);
 
 app.get('/', (req, res) => res.send('API Running'));
 scheduleRoomCleanup();

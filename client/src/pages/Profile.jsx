@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const audioRef = useRef(null);
+
+  // Music Player State
+  const [currentTrack, setCurrentTrack] = useState({
+    name: "Loading...",
+    artist: "Please wait",
+    duration: 0,
+    preview_url: null
+  });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [selectedLanguage, setSelectedLanguage] = useState("hindi");
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+
+  const languages = [
+    { code: "hindi", label: "Hindi", market: "IN" },
+    { code: "english", label: "English", market: "US" },
+    { code: "punjabi", label: "Punjabi", market: "IN" },
+    { code: "tamil", label: "Tamil", market: "IN" },
+    { code: "telugu", label: "Telugu", market: "IN" },
+    { code: "bengali", label: "Bengali", market: "IN" },
+    { code: "korean", label: "K-Pop", market: "KR" },
+    { code: "spanish", label: "Spanish", market: "ES" }
+  ];
 
   // Random data matching the screenshot
   const userStats = {
@@ -12,11 +36,109 @@ const Profile = () => {
     stat4: "1.5m"
   };
 
-  const challenges = [
-    { name: "1Challenge", progress: 43, total: 110 },
-    { name: "1Challenge", progress: 24, total: 30 },
-    { name: "3Progress", progress: 33, total: 70 }
-  ];
+  // Fetch random track based on language
+  const fetchRandomTrack = async (language = selectedLanguage) => {
+    try {
+      // Get access token from your server
+      const tokenResponse = await fetch('/api/spotify/token');
+      const { access_token } = await tokenResponse.json();
+
+      const languageQueries = {
+        hindi: "genre:bollywood OR genre:indian OR hindi",
+        english: "genre:pop OR genre:rock",
+        punjabi: "punjabi OR bhangra",
+        tamil: "tamil OR kollywood",
+        telugu: "telugu OR tollywood",
+        bengali: "bengali OR rabindrasangeet",
+        korean: "genre:k-pop OR korean",
+        spanish: "genre:latin OR spanish"
+      };
+
+      const query = languageQueries[language] || languageQueries.hindi;
+      const market = languages.find(lang => lang.code === language)?.market || "IN";
+      
+      const searchResponse = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&market=${market}&limit=50`,
+        {
+          headers: {
+            'Authorization': `Bearer ${access_token}`
+          }
+        }
+      );
+
+      const data = await searchResponse.json();
+      
+      if (data.tracks && data.tracks.items.length > 0) {
+        // Filter tracks with preview URLs
+        const tracksWithPreview = data.tracks.items.filter(track => track.preview_url);
+        
+        if (tracksWithPreview.length > 0) {
+          const randomTrack = tracksWithPreview[Math.floor(Math.random() * tracksWithPreview.length)];
+          setCurrentTrack({
+            name: randomTrack.name,
+            artist: randomTrack.artists[0].name,
+            duration: 30, // Preview is 30 seconds
+            preview_url: randomTrack.preview_url
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching track:', error);
+      setCurrentTrack({
+        name: `Random ${languages.find(l => l.code === language)?.label || 'Hindi'} Song`,
+        artist: "Demo Artist",
+        duration: 30,
+        preview_url: null
+      });
+    }
+  };
+
+  // Audio controls
+  const togglePlay = () => {
+    if (audioRef.current && currentTrack.preview_url) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const skipTrack = () => {
+    fetchRandomTrack();
+    setCurrentTime(0);
+    setIsPlaying(false);
+  };
+
+  // Update current time
+  useEffect(() => {
+    if (audioRef.current) {
+      const updateTime = () => setCurrentTime(audioRef.current.currentTime || 0);
+      audioRef.current.addEventListener('timeupdate', updateTime);
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      });
+      
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.removeEventListener('timeupdate', updateTime);
+        }
+      };
+    }
+  }, [currentTrack]);
+
+  // Load initial track
+  useEffect(() => {
+    fetchRandomTrack();
+  }, [selectedLanguage]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="min-h-screen text-white font-silkscreen relative" style={{
@@ -165,41 +287,41 @@ const Profile = () => {
                 <button className="text-[#FFFB00] text-xl hover:text-yellow-300">+</button>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-lg mb-3 font-bold">
                     <span className="text-white">Music Knowledge</span>
-                    <span className="text-gray-400">89/100</span>
+                    <span className="text-[#FFFB00]">89/100</span>
                   </div>
-                  <div className="bg-gray-700 rounded-full h-3">
-                    <div className="bg-[#FFFB00] h-3 rounded-full transition-all duration-1000 w-[89%]"></div>
+                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
+                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[89%] shadow-[0_0_15px_#FFFB00]"></div>
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-lg mb-3 font-bold">
                     <span className="text-white">Quick Recognition</span>
-                    <span className="text-gray-400">76/100</span>
+                    <span className="text-[#FFFB00]">76/100</span>
                   </div>
-                  <div className="bg-gray-700 rounded-full h-3">
-                    <div className="bg-[#FFFB00] h-3 rounded-full transition-all duration-1000 w-[76%]"></div>
+                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
+                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[76%] shadow-[0_0_15px_#FFFB00]"></div>
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-lg mb-3 font-bold">
                     <span className="text-white">Genre Master</span>
-                    <span className="text-gray-400">63/100</span>
+                    <span className="text-[#FFFB00]">63/100</span>
                   </div>
-                  <div className="bg-gray-700 rounded-full h-3">
-                    <div className="bg-[#FFFB00] h-3 rounded-full transition-all duration-1000 w-[63%]"></div>
+                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
+                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[63%] shadow-[0_0_15px_#FFFB00]"></div>
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-lg mb-3 font-bold">
                     <span className="text-white">Streak Builder</span>
-                    <span className="text-gray-400">92/100</span>
+                    <span className="text-[#FFFB00]">92/100</span>
                   </div>
-                  <div className="bg-gray-700 rounded-full h-3">
-                    <div className="bg-[#FFFB00] h-3 rounded-full transition-all duration-1000 w-[92%]"></div>
+                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
+                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[92%] shadow-[0_0_15px_#FFFB00]"></div>
                   </div>
                 </div>
               </div>
@@ -214,58 +336,114 @@ const Profile = () => {
                   className="w-full h-auto pixelated opacity-90"
                 />
                 
+                {/* Hidden Audio Element */}
+                {currentTrack.preview_url && (
+                  <audio 
+                    ref={audioRef} 
+                    src={currentTrack.preview_url} 
+                    onLoadedData={() => console.log('Audio loaded')}
+                  />
+                )}
+                
                 {/* Music Player Controls Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-between p-4">
-                  {/* Track Info */}
-                  <div className="bg-black/70 backdrop-blur-sm rounded px-3 py-2 w-fit">
-                    <div className="text-[#FFFB00] text-xs font-bold">NOW PLAYING</div>
-                    <div className="text-yellow-300 text-xs">BEATS & VIBES</div>
+                  {/* Track Info with Language Selector */}
+                  <div className="flex justify-between items-start">
+                    <div className="bg-black/80 backdrop-blur-sm rounded px-3 py-2 flex-1 mr-2">
+                      <div className="text-[#FFFB00] text-xs font-bold">NOW PLAYING</div>
+                      <div className="text-yellow-300 text-xs font-bold truncate">{currentTrack.name}</div>
+                      <div className="text-gray-300 text-xs truncate">{currentTrack.artist}</div>
+                    </div>
+                    
+                    {/* Language Dropdown */}
+                    <div className="relative">
+                      <button 
+                        onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                        className="bg-[#FFFB00] text-black px-2 py-1 rounded text-xs font-bold hover:bg-yellow-300 transition-colors"
+                      >
+                        {languages.find(l => l.code === selectedLanguage)?.label} ▼
+                      </button>
+                      
+                      {showLanguageDropdown && (
+                        <div className="absolute top-full right-0 mt-1 bg-black/90 backdrop-blur-sm rounded border border-[#FFFB00] z-50 min-w-[100px]">
+                          {languages.map((language) => (
+                            <button
+                              key={language.code}
+                              onClick={() => {
+                                setSelectedLanguage(language.code);
+                                setShowLanguageDropdown(false);
+                              }}
+                              className={`block w-full text-left px-3 py-2 text-xs hover:bg-[#FFFB00] hover:text-black transition-colors ${
+                                selectedLanguage === language.code ? 'text-[#FFFB00] font-bold' : 'text-white'
+                              }`}
+                            >
+                              {language.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Progress Bar */}
-                  <div className="bg-black/70 backdrop-blur-sm rounded p-3 mx-auto w-4/5">
-                    <div className="flex justify-between text-[#FFFB00] text-xs mb-2">
-                      <span>1:23</span>
-                      <span>3:45</span>
+                  <div className="bg-black/80 backdrop-blur-sm rounded p-3 mx-auto w-4/5">
+                    <div className="flex justify-between text-[#FFFB00] text-xs mb-2 font-bold">
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{formatTime(currentTrack.duration)}</span>
                     </div>
-                    <div className="bg-gray-700 rounded-full h-1">
-                      <div className="bg-[#FFFB00] h-1 rounded-full w-1/3 shadow-[0_0_8px_#FFFB00]"></div>
+                    <div className="bg-gray-700 rounded-full h-2 shadow-inner">
+                      <div 
+                        className="bg-[#FFFB00] h-2 rounded-full shadow-[0_0_10px_#FFFB00] transition-all"
+                        style={{ width: `${(currentTime / currentTrack.duration) * 100}%` }}
+                      ></div>
                     </div>
                   </div>
                   
                   {/* Control Buttons */}
-                  <div className="flex justify-center space-x-3">
-                    <button className="w-8 h-8 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_10px_#FFFB00] text-sm hover:scale-110">
+                  <div className="flex justify-center space-x-4">
+                    <button 
+                      onClick={skipTrack}
+                      className="w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold"
+                    >
                       ⏮
                     </button>
-                    <button className="w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110">
-                      ⏸
+                    <button 
+                      onClick={togglePlay}
+                      disabled={!currentTrack.preview_url}
+                      className={`w-12 h-12 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_20px_#FFFB00] text-xl hover:scale-110 font-bold ${
+                        !currentTrack.preview_url ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      {isPlaying ? '⏸' : '▶'}
                     </button>
-                    <button className="w-8 h-8 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_10px_#FFFB00] text-sm hover:scale-110">
+                    <button 
+                      onClick={skipTrack}
+                      className="w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold"
+                    >
                       ⏭
                     </button>
                   </div>
                 </div>
                 
                 {/* Volume Control */}
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-2">
-                  <span className="text-[#FFFB00] text-xs">VOL</span>
-                  <div className="bg-gray-700 rounded-full h-1 w-20">
-                    <div className="bg-[#FFFB00] h-1 rounded-full w-3/4 shadow-[0_0_5px_#FFFB00]"></div>
+                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-3">
+                  <span className="text-[#FFFB00] text-sm font-bold">VOL</span>
+                  <div className="bg-gray-700 rounded-full h-2 w-24 shadow-inner">
+                    <div className="bg-[#FFFB00] h-2 rounded-full w-3/4 shadow-[0_0_8px_#FFFB00]"></div>
                   </div>
-                  <span className="text-[#FFFB00] text-xs">75%</span>
+                  <span className="text-[#FFFB00] text-sm font-bold">75%</span>
                 </div>
                 
                 {/* Checkered Pattern */}
-                <div className="absolute bottom-4 right-4 w-8 h-8 bg-[#FFFB00] rounded" style={{
+                <div className="absolute bottom-4 right-4 w-10 h-10 bg-[#FFFB00] rounded shadow-[0_0_15px_#FFFB00]" style={{
                   backgroundImage: `
                     linear-gradient(45deg, black 25%, transparent 25%), 
                     linear-gradient(-45deg, black 25%, transparent 25%), 
                     linear-gradient(45deg, transparent 75%, black 75%), 
                     linear-gradient(-45deg, transparent 75%, black 75%)
                   `,
-                  backgroundSize: '8px 8px',
-                  backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px'
+                  backgroundSize: '10px 10px',
+                  backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
                 }}></div>
               </div>
             </div>
