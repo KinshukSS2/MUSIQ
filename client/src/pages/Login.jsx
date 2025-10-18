@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
 import googleIcon from "../assets/google.svg";
 import { auth, provider } from "../config/firebase";
 import AvatarGrid from "../components/common/AvatarGrid";
 import Navbar from "../components/common/Navbar";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ const Login = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
 
   const validateEmailLogin = () => {
     const newErrors = {};
@@ -55,15 +57,17 @@ const Login = () => {
       // Sync user with backend
       await syncUserWithBackend(result.user);
 
+      const userData = {
+        name: result.user.displayName || email,
+        uid: result.user.uid,
+        avatar: result.user.photoURL || "",
+      };
+
       localStorage.setItem("token", token);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: result.user.displayName || email,
-          uid: result.user.uid,
-          avatar: result.user.photoURL || "",
-        })
-      );
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Update AuthContext as well
+      setUser(userData);
 
       window.location.href = "/landing";
     } catch (err) {
@@ -107,15 +111,17 @@ const Login = () => {
       // Sync user with backend
       await syncUserWithBackend(result.user, userAvatar);
 
+      const userData = {
+        name: result.user.displayName || "Google User",
+        uid: result.user.uid,
+        avatar: userAvatar,
+      };
+
       localStorage.setItem("token", token);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: result.user.displayName || "Google User",
-          uid: result.user.uid,
-          avatar: userAvatar,
-        })
-      );
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Update AuthContext as well
+      setUser(userData);
 
       window.location.href = "/landing";
     } catch (err) {
