@@ -7,32 +7,9 @@ const Profile = () => {
   const audioRef = useRef(null);
   const { user, isGuest, guestName, guestAvatar } = useContext(AuthContext);
 
-  // Debug logging
-  console.log('AuthContext user:', user);
-  console.log('AuthContext isGuest:', isGuest);
-  console.log('AuthContext guestName:', guestName);
-  
-  // Also check localStorage data like LandingPage does
+  // Get user data from localStorage as fallback
   const userData = JSON.parse(localStorage.getItem("user") || "null");
   const userName = localStorage.getItem("userName");
-  console.log('localStorage user data:', userData);
-  console.log('localStorage userName:', userName);
-  console.log('All localStorage keys:', Object.keys(localStorage));
-  console.log('localStorage "user" raw:', localStorage.getItem("user"));
-  console.log('localStorage "userName" raw:', localStorage.getItem("userName"));    // Debug logging
-  console.log("Profile - User:", user);
-  console.log("Profile - User displayName:", user?.displayName);
-  console.log("Profile - User email:", user?.email);
-  console.log("Profile - IsGuest:", isGuest);
-  console.log("Profile - GuestName:", guestName);
-  
-  // Check localStorage data
-  const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-  const storedUserName = localStorage.getItem("userName");
-  console.log("Profile - localStorage user:", storedUser);
-  console.log("Profile - localStorage userName:", storedUserName);
-
-  // Debug: Log user data
   console.log('Profile - User data:', user);
   console.log('Profile - isGuest:', isGuest);
   console.log('Profile - guestName:', guestName);
