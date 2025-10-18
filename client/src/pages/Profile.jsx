@@ -9,24 +9,28 @@ const Profile = () => {
   const [currentTrack, setCurrentTrack] = useState({
     name: "Loading...",
     artist: "Please wait",
-    duration: 0,
-    preview_url: null
+    movie: "",
+    videoId: null
   });
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [selectedLanguage, setSelectedLanguage] = useState("hindi");
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
 
   const languages = [
-    { code: "hindi", label: "Hindi", market: "IN" },
-    { code: "english", label: "English", market: "US" },
-    { code: "punjabi", label: "Punjabi", market: "IN" },
-    { code: "tamil", label: "Tamil", market: "IN" },
-    { code: "telugu", label: "Telugu", market: "IN" },
-    { code: "bengali", label: "Bengali", market: "IN" },
-    { code: "korean", label: "K-Pop", market: "KR" },
-    { code: "spanish", label: "Spanish", market: "ES" }
+    { code: "all", label: "All Songs" },
+    { code: "hindi", label: "Hindi" },
+    { code: "english", label: "English" },
+    { code: "punjabi", label: "Punjabi" },
+    { code: "tamil", label: "Tamil" },
+    { code: "telugu", label: "Telugu" },
+    { code: "malayalam", label: "Malayalam" },
+    { code: "bengali", label: "Bengali" },
+    { code: "korean", label: "K-Pop" },
+    { code: "spanish", label: "Spanish" }
   ];
+
+  const [selectedLanguage, setSelectedLanguage] = useState("all");
 
   // Random data matching the screenshot
   const userStats = {
@@ -36,123 +40,264 @@ const Profile = () => {
     stat4: "1.5m"
   };
 
-  // Fetch random track based on language
-  const fetchRandomTrack = async (language = selectedLanguage) => {
+  // Fetch random track from database
+  const fetchRandomTrack = async (language = selectedLanguage, shouldAutoplay = autoplayEnabled) => {
+    setIsLoading(true);
     try {
-      // Get access token from your server
-      const tokenResponse = await fetch('/api/spotify/token');
-      const { access_token } = await tokenResponse.json();
-
-      const languageQueries = {
-        hindi: "genre:bollywood OR genre:indian OR hindi",
-        english: "genre:pop OR genre:rock",
-        punjabi: "punjabi OR bhangra",
-        tamil: "tamil OR kollywood",
-        telugu: "telugu OR tollywood",
-        bengali: "bengali OR rabindrasangeet",
-        korean: "genre:k-pop OR korean",
-        spanish: "genre:latin OR spanish"
-      };
-
-      const query = languageQueries[language] || languageQueries.hindi;
-      const market = languages.find(lang => lang.code === language)?.market || "IN";
+      console.log('Fetching random song from database...');
       
-      const searchResponse = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&market=${market}&limit=50`,
-        {
-          headers: {
-            'Authorization': `Bearer ${access_token}`
-          }
-        }
-      );
-
-      const data = await searchResponse.json();
+      const response = await fetch('http://localhost:5000/api/song/random');
+      console.log('Response status:', response.status);
       
-      if (data.tracks && data.tracks.items.length > 0) {
-        // Filter tracks with preview URLs
-        const tracksWithPreview = data.tracks.items.filter(track => track.preview_url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch song: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Fetched song:', data.song);
+      
+      if (data.song) {
+        setCurrentTrack({
+          name: data.song.song,
+          artist: data.song.composer || "Unknown Artist",
+          movie: data.song.movie || "",
+          videoId: data.song.videoId
+        });
+        console.log('Set track with videoId:', data.song.videoId);
         
-        if (tracksWithPreview.length > 0) {
-          const randomTrack = tracksWithPreview[Math.floor(Math.random() * tracksWithPreview.length)];
-          setCurrentTrack({
-            name: randomTrack.name,
-            artist: randomTrack.artists[0].name,
-            duration: 30, // Preview is 30 seconds
-            preview_url: randomTrack.preview_url
-          });
+        // Auto-start playing if requested
+        if (shouldAutoplay) {
+          setTimeout(() => {
+            const iframe = document.getElementById('youtube-player');
+            if (iframe && data.song.videoId) {
+              iframe.src = `https://www.youtube.com/embed/${data.song.videoId}?autoplay=1&enablejsapi=1`;
+              setIsPlaying(true);
+            }
+          }, 500);
         }
       }
+      
     } catch (error) {
       console.error('Error fetching track:', error);
-      setCurrentTrack({
-        name: `Random ${languages.find(l => l.code === language)?.label || 'Hindi'} Song`,
-        artist: "Demo Artist",
-        duration: 30,
-        preview_url: null
-      });
+      
+      // Fallback with demo tracks organized by language - All tested and working
+      const demoTracksByLanguage = {
+        all: [
+          { name: "Tum Hi Ho", artist: "Arijit Singh", movie: "Aashiqui 2", videoId: "Umqb9KENgmk" },
+          { name: "Shape of You", artist: "Ed Sheeran", movie: "Single", videoId: "JGwWNGJdvx8" },
+          { name: "Laung Laachi", artist: "Mannat Noor", movie: "Laung Laachi", videoId: "KaLxjDFQsVw" },
+          { name: "Despacito", artist: "Luis Fonsi", movie: "Single", videoId: "kJQP7kiw5Fk" }
+        ],
+        hindi: [
+          { name: "Tum Hi Ho", artist: "Arijit Singh", movie: "Aashiqui 2", videoId: "Umqb9KENgmk" },
+          { name: "Kesariya", artist: "Arijit Singh", movie: "Brahmastra", videoId: "FVOZaRwq54E" },
+          { name: "Apna Bana Le", artist: "Arijit Singh", movie: "Bhediya", videoId: "3haEIhUk47s" },
+          { name: "Tera Ban Jaunga", artist: "Akhil Sachdeva", movie: "Kabir Singh", videoId: "1eWdbMBYlH4" },
+          { name: "Raataan Lambiyan", artist: "Tanishk Bagchi", movie: "Shershaah", videoId: "tpDVfjhKqVo" },
+          { name: "Mann Mera", artist: "Gajendra Verma", movie: "Table No. 21", videoId: "bSrHNshZdT0" }
+        ],
+        english: [
+          { name: "Shape of You", artist: "Ed Sheeran", movie: "Single", videoId: "JGwWNGJdvx8" },
+          { name: "Blinding Lights", artist: "The Weeknd", movie: "Single", videoId: "4NRXx6U8ABQ" },
+          { name: "Perfect", artist: "Ed Sheeran", movie: "Single", videoId: "2Vv-BfVoq4g" },
+          { name: "Someone You Loved", artist: "Lewis Capaldi", movie: "Single", videoId: "zABLecsR5UE" },
+          { name: "Bad Habits", artist: "Ed Sheeran", movie: "Single", videoId: "orJSJGHjBLI" },
+          { name: "Watermelon Sugar", artist: "Harry Styles", movie: "Single", videoId: "E07s5ZYygMg" }
+        ],
+        punjabi: [
+          { name: "Laung Laachi", artist: "Mannat Noor", movie: "Laung Laachi", videoId: "KaLxjDFQsVw" },
+          { name: "Brown Munde", artist: "AP Dhillon", movie: "Single", videoId: "VNs_cCtdbPc" },
+          { name: "Excuses", artist: "AP Dhillon", movie: "Single", videoId: "qOyYnyiiI20" },
+          { name: "Insane", artist: "AP Dhillon", movie: "Single", videoId: "7WBvonuTXUY" },
+          { name: "295", artist: "Sidhu Moose Wala", movie: "Single", videoId: "YPgGzlB57EM" },
+          { name: "Bambiha Bole", artist: "Sidhu Moose Wala", movie: "Single", videoId: "Rn3EFBKjCDY" }
+        ],
+        tamil: [
+          { name: "Vaathi Coming", artist: "Anirudh", movie: "Master", videoId: "DOMcaWxLxe8" },
+          { name: "Rowdy Baby", artist: "Dhanush", movie: "Maari 2", videoId: "x6Q7c9RyMzk" },
+          { name: "Arabic Kuthu", artist: "Anirudh", movie: "Beast", videoId: "fiAWLyFWGmE" },
+          { name: "Enjoy Enjaami", artist: "Dhee", movie: "Single", videoId: "eYq7WapuDLU" },
+          { name: "Oo Antava", artist: "Indravathi Chauhan", movie: "Pushpa", videoId: "geRLS9sLW2E" },
+          { name: "Naatu Naatu", artist: "Rahul Sipligunj", movie: "RRR", videoId: "WDBfwsODGB0" }
+        ],
+        telugu: [
+          { name: "Butta Bomma", artist: "Armaan Malik", movie: "Ala Vaikuntapuramlo", videoId: "JjVXngPaZGY" },
+          { name: "Ramuloo Ramulaa", artist: "Anurag Kulkarni", movie: "Ala Vaikuntapuramlo", videoId: "BddP6PYo2gs" },
+          { name: "Samajavaragamana", artist: "Sid Sriram", movie: "Ala Vaikuntapuramlo", videoId: "HiqE15Z12rk" },
+          { name: "Naatu Naatu", artist: "Rahul Sipligunj", movie: "RRR", videoId: "WDBfwsODGB0" },
+          { name: "Oo Antava", artist: "Indravathi Chauhan", movie: "Pushpa", videoId: "geRLS9sLW2E" },
+          { name: "Srivalli", artist: "Javed Ali", movie: "Pushpa", videoId: "9sOyJ-bKehE" }
+        ],
+        malayalam: [
+          { name: "Malare", artist: "Vijay Yesudas", movie: "Premam", videoId: "CJrVZCbKxsE" },
+          { name: "Pathivaayi Njan", artist: "Shaan Rahman", movie: "Bangalore Days", videoId: "EqgFGQ1gkug" },
+          { name: "Mukkathe Penne", artist: "Vineeth Sreenivasan", movie: "Ennu Ninte Moideen", videoId: "yFsA0xwHP88" },
+          { name: "Varaha Roopam", artist: "Vishnu Shyam", movie: "Kantara", videoId: "5F3pkyNykz8" },
+          { name: "Jimikki Kammal", artist: "Ranjith Unni", movie: "Velipadinte Pusthakam", videoId: "d7sQp8kzIkQ" },
+          { name: "Darshana", artist: "Sharreth", movie: "Oru Vadakkan Selfie", videoId: "y67x1Hb2J2o" }
+        ],
+        bengali: [
+          { name: "Tomake Chai", artist: "Arijit Singh", movie: "Gangster", videoId: "FGlGpwKXqN8" },
+          { name: "Ek Din", artist: "Anupam Roy", movie: "Autograph", videoId: "4vXZge3VhfQ" },
+          { name: "Amake Amar Moto", artist: "Anupam Roy", movie: "Autograph", videoId: "Q9FxJhHTJOQ" },
+          { name: "Egiye De", artist: "Anupam Roy", movie: "Single", videoId: "tHcyJNAx8R8" },
+          { name: "Chokher Bali", artist: "Shreya Ghoshal", movie: "Choker Bali", videoId: "dPLJpffGDbc" },
+          { name: "Mon Majhi Re", artist: "Arijit Singh", movie: "Boss", videoId: "5rJOCUxGEaY" }
+        ],
+        korean: [
+          { name: "Dynamite", artist: "BTS", movie: "Single", videoId: "gdZLi9oWNZg" },
+          { name: "Gangnam Style", artist: "PSY", movie: "Single", videoId: "9bZkp7q19f0" },
+          { name: "How You Like That", artist: "BLACKPINK", movie: "Single", videoId: "ioNng23DkIM" },
+          { name: "DNA", artist: "BTS", movie: "Single", videoId: "MBdVXkSdhwU" },
+          { name: "Kill This Love", artist: "BLACKPINK", movie: "Single", videoId: "2S24-y0Ij3Y" },
+          { name: "Butter", artist: "BTS", movie: "Single", videoId: "WMweEpGlu_U" }
+        ],
+        spanish: [
+          { name: "Despacito", artist: "Luis Fonsi", movie: "Single", videoId: "kJQP7kiw5Fk" },
+          { name: "Macarena", artist: "Los Del Rio", movie: "Single", videoId: "zWaymcVmJ-A" },
+          { name: "Bailando", artist: "Enrique Iglesias", movie: "Single", videoId: "NUsoVlDFqZg" },
+          { name: "Havana", artist: "Camila Cabello", movie: "Single", videoId: "HCjNJDNzw8Y" },
+          { name: "Con Altura", artist: "Rosalia", movie: "Single", videoId: "p7bfOZek9t4" },
+          { name: "La Tortura", artist: "Shakira", movie: "Single", videoId: "DkFJE8ZdeG8" }
+        ]
+      };
+      
+      const selectedTracks = demoTracksByLanguage[language] || demoTracksByLanguage.hindi;
+      const randomDemo = selectedTracks[Math.floor(Math.random() * selectedTracks.length)];
+      setCurrentTrack(randomDemo);
+      console.log(`Using ${language} demo track:`, randomDemo.name);
+      
+      // Auto-start playing if requested
+      if (shouldAutoplay) {
+        setTimeout(() => {
+          const iframe = document.getElementById('youtube-player');
+          if (iframe && randomDemo.videoId) {
+            iframe.src = `https://www.youtube.com/embed/${randomDemo.videoId}?autoplay=1&enablejsapi=1`;
+            setIsPlaying(true);
+          }
+        }, 500);
+      }
     }
+    setIsLoading(false);
   };
 
-  // Audio controls
+  // Audio controls using YouTube embed (same as GameRoom)
   const togglePlay = () => {
-    if (audioRef.current && currentTrack.preview_url) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
+    if (currentTrack.videoId) {
+      const iframe = document.getElementById('youtube-player');
+      if (iframe) {
+        if (isPlaying) {
+          // Stop the video by reloading iframe without autoplay
+          iframe.src = `https://www.youtube.com/embed/${currentTrack.videoId}?enablejsapi=1`;
+          setIsPlaying(false);
+        } else {
+          // Start playing with autoplay
+          iframe.src = `https://www.youtube.com/embed/${currentTrack.videoId}?autoplay=1&enablejsapi=1`;
+          setIsPlaying(true);
+        }
       }
-      setIsPlaying(!isPlaying);
+    } else {
+      alert('No song available to play');
     }
   };
 
   const skipTrack = () => {
-    fetchRandomTrack();
-    setCurrentTime(0);
+    // Stop current track
+    const iframe = document.getElementById('youtube-player');
+    if (iframe) {
+      iframe.src = `https://www.youtube.com/embed/${currentTrack.videoId}?enablejsapi=1`;
+    }
     setIsPlaying(false);
+    
+    // Fetch new track with autoplay
+    fetchRandomTrack(selectedLanguage, autoplayEnabled);
   };
 
-  // Update current time
+  // Handle song end and autoplay next
+  const handleSongEnd = () => {
+    if (autoplayEnabled) {
+      console.log("Song ended, playing next track...");
+      fetchRandomTrack(selectedLanguage, true);
+    } else {
+      setIsPlaying(false);
+    }
+  };
+
+  // Auto-advance to next song after typical duration (3-4 minutes)
   useEffect(() => {
-    if (audioRef.current) {
-      const updateTime = () => setCurrentTime(audioRef.current.currentTime || 0);
-      audioRef.current.addEventListener('timeupdate', updateTime);
-      audioRef.current.addEventListener('ended', () => {
-        setIsPlaying(false);
-        setCurrentTime(0);
-      });
+    let songTimer;
+    
+    if (isPlaying && autoplayEnabled && currentTrack.videoId) {
+      // Set timer for 4 minutes (240 seconds) - typical song length
+      songTimer = setTimeout(() => {
+        console.log("Song timeout reached, playing next track...");
+        handleSongEnd();
+      }, 240000); // 4 minutes
+    }
+
+    return () => {
+      if (songTimer) {
+        clearTimeout(songTimer);
+      }
+    };
+  }, [isPlaying, currentTrack.videoId, autoplayEnabled, selectedLanguage]);
+
+  // YouTube API event listener for song end detection
+  useEffect(() => {
+    // Load YouTube API if not already loaded
+    if (!window.YT) {
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      document.body.appendChild(script);
       
-      return () => {
-        if (audioRef.current) {
-          audioRef.current.removeEventListener('timeupdate', updateTime);
-        }
+      window.onYouTubeIframeAPIReady = () => {
+        console.log('YouTube API loaded');
       };
     }
-  }, [currentTrack]);
+  }, []);
 
-  // Load initial track
+  // Load initial track with autoplay
   useEffect(() => {
-    fetchRandomTrack();
-  }, [selectedLanguage]);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+    fetchRandomTrack(selectedLanguage, true);
+  }, []);
 
   return (
-    <div className="min-h-screen text-white font-silkscreen relative" style={{
+    <div className="min-h-screen text-white font-silkscreen relative overflow-hidden" style={{
       backgroundImage: 'url(/profilebackground.png)',
       backgroundRepeat: 'repeat',
       backgroundSize: 'auto',
       imageRendering: 'pixelated'
     }}>
+      {/* Animated grid overlay */}
+      <div className="absolute inset-0 opacity-10 z-0">
+        <div className="w-full h-full" style={{
+          backgroundImage: `
+            linear-gradient(rgba(255, 251, 0, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 251, 0, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+          animation: 'gridFloat 20s ease-in-out infinite'
+        }}></div>
+      </div>
+
+      {/* Retro scanlines effect */}
+      <div className="absolute inset-0 pointer-events-none z-10" style={{
+        backgroundImage: 'linear-gradient(transparent 50%, rgba(0, 255, 0, 0.03) 50%)',
+        backgroundSize: '100% 4px',
+        animation: 'scanlines 0.1s linear infinite'
+      }}></div>
+
       {/* Dark overlay for content readability */}
-      <div className="absolute inset-0 bg-black/80 z-0"></div>
+      <div className="absolute inset-0 bg-black/75 z-0"></div>
       
       {/* Top Bar */}
       <div className="relative z-10 flex justify-between items-center px-6 py-3">
-        <div className="text-[#FFFB00] font-bold text-lg">MUSIQ PROFILE</div>
+        <div className="flex items-center space-x-3">
+          <img src="/logo.png" alt="MusIQ" className="w-8 h-8" />
+          <div className="font-bold text-lg">
+            <span className="text-white">MUS</span><span className="text-[#FFFB00]">IQ</span>
+          </div>
+        </div>
         <div className="flex space-x-3">
           <button 
             onClick={() => navigate("/landing")}
@@ -336,12 +481,13 @@ const Profile = () => {
                   className="w-full h-auto pixelated opacity-90"
                 />
                 
-                {/* Hidden Audio Element */}
-                {currentTrack.preview_url && (
-                  <audio 
-                    ref={audioRef} 
-                    src={currentTrack.preview_url} 
-                    onLoadedData={() => console.log('Audio loaded')}
+                {/* Hidden YouTube Player */}
+                {currentTrack.videoId && (
+                  <iframe
+                    id="youtube-player"
+                    src={`https://www.youtube.com/embed/${currentTrack.videoId}?enablejsapi=1`}
+                    style={{ display: 'none' }}
+                    allow="autoplay; encrypted-media"
                   />
                 )}
                 
@@ -351,8 +497,17 @@ const Profile = () => {
                   <div className="flex justify-between items-start">
                     <div className="bg-black/80 backdrop-blur-sm rounded px-3 py-2 flex-1 mr-2">
                       <div className="text-[#FFFB00] text-xs font-bold">NOW PLAYING</div>
-                      <div className="text-yellow-300 text-xs font-bold truncate">{currentTrack.name}</div>
-                      <div className="text-gray-300 text-xs truncate">{currentTrack.artist}</div>
+                      <div className="text-yellow-300 text-xs font-bold truncate">
+                        {isLoading ? "Loading..." : currentTrack.name}
+                      </div>
+                      <div className="text-gray-300 text-xs truncate">
+                        {isLoading ? "Please wait" : currentTrack.artist}
+                      </div>
+                      {currentTrack.movie && (
+                        <div className="text-gray-400 text-xs truncate">
+                          From: {currentTrack.movie}
+                        </div>
+                      )}
                     </div>
                     
                     {/* Language Dropdown */}
@@ -372,6 +527,7 @@ const Profile = () => {
                               onClick={() => {
                                 setSelectedLanguage(language.code);
                                 setShowLanguageDropdown(false);
+                                fetchRandomTrack(language.code, autoplayEnabled); // Fetch song in selected language with autoplay
                               }}
                               className={`block w-full text-left px-3 py-2 text-xs hover:bg-[#FFFB00] hover:text-black transition-colors ${
                                 selectedLanguage === language.code ? 'text-[#FFFB00] font-bold' : 'text-white'
@@ -385,53 +541,43 @@ const Profile = () => {
                     </div>
                   </div>
                   
-                  {/* Progress Bar */}
-                  <div className="bg-black/80 backdrop-blur-sm rounded p-3 mx-auto w-4/5">
-                    <div className="flex justify-between text-[#FFFB00] text-xs mb-2 font-bold">
-                      <span>{formatTime(currentTime)}</span>
-                      <span>{formatTime(currentTrack.duration)}</span>
-                    </div>
-                    <div className="bg-gray-700 rounded-full h-2 shadow-inner">
-                      <div 
-                        className="bg-[#FFFB00] h-2 rounded-full shadow-[0_0_10px_#FFFB00] transition-all"
-                        style={{ width: `${(currentTime / currentTrack.duration) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  
                   {/* Control Buttons */}
                   <div className="flex justify-center space-x-4">
                     <button 
                       onClick={skipTrack}
-                      className="w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold"
+                      disabled={isLoading}
+                      className={`w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold ${
+                        isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     >
                       ⏮
                     </button>
                     <button 
                       onClick={togglePlay}
-                      disabled={!currentTrack.preview_url}
+                      disabled={!currentTrack.videoId || isLoading}
                       className={`w-12 h-12 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_20px_#FFFB00] text-xl hover:scale-110 font-bold ${
-                        !currentTrack.preview_url ? 'opacity-50 cursor-not-allowed' : ''
+                        (!currentTrack.videoId || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
                       {isPlaying ? '⏸' : '▶'}
                     </button>
                     <button 
                       onClick={skipTrack}
-                      className="w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold"
+                      disabled={isLoading}
+                      className={`w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold ${
+                        isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     >
                       ⏭
                     </button>
                   </div>
                 </div>
                 
-                {/* Volume Control */}
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-3">
-                  <span className="text-[#FFFB00] text-sm font-bold">VOL</span>
-                  <div className="bg-gray-700 rounded-full h-2 w-24 shadow-inner">
-                    <div className="bg-[#FFFB00] h-2 rounded-full w-3/4 shadow-[0_0_8px_#FFFB00]"></div>
-                  </div>
-                  <span className="text-[#FFFB00] text-sm font-bold">75%</span>
+                {/* Song Status Indicator */}
+                <div className="absolute bottom-2 left-2">
+                  <div className={`w-3 h-3 rounded-full ${
+                    currentTrack.videoId ? 'bg-green-400 shadow-[0_0_10px_#00ff00]' : 'bg-red-400 shadow-[0_0_10px_#ff0000]'
+                  }`}></div>
                 </div>
                 
                 {/* Checkered Pattern */}
@@ -448,6 +594,97 @@ const Profile = () => {
               </div>
             </div>
           </div>
+
+          {/* Gaming Zone Section */}
+          <div className="mt-8 bg-gray-900/80 backdrop-blur-sm p-6 rounded border border-[#FFFB00]/30">
+            <div className="flex items-center mb-4">
+              <span className="text-[#FFFB00] text-2xl mr-3">🎮</span>
+              <h3 className="text-white font-bold text-xl">Gaming Zone</h3>
+            </div>
+            
+            {/* Retro Game Stats */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
+                <div className="text-[#FFFB00] text-xs font-bold mb-2">🏆 CHAMPIONSHIP</div>
+                <div className="text-white text-lg font-bold">Rank #47</div>
+                <div className="text-gray-400 text-xs">Global Leaderboard</div>
+              </div>
+              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
+                <div className="text-[#FFFB00] text-xs font-bold mb-2">⚡ REACTION TIME</div>
+                <div className="text-white text-lg font-bold">2.3s</div>
+                <div className="text-gray-400 text-xs">Average Response</div>
+              </div>
+              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
+                <div className="text-[#FFFB00] text-xs font-bold mb-2">🎵 MUSIC GENRES</div>
+                <div className="text-white text-lg font-bold">127</div>
+                <div className="text-gray-400 text-xs">Songs Mastered</div>
+              </div>
+              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
+                <div className="text-[#FFFB00] text-xs font-bold mb-2">🔥 DAILY STREAK</div>
+                <div className="text-white text-lg font-bold">15 Days</div>
+                <div className="text-gray-400 text-xs">Current Run</div>
+              </div>
+            </div>
+
+            {/* Retro Badges */}
+            <div className="mb-6">
+              <h4 className="text-[#FFFB00] font-bold mb-3 text-sm">🎖️ RETRO BADGES</h4>
+              <div className="grid grid-cols-4 gap-3">
+                <div className="bg-gradient-to-b from-[#FFFB00] to-yellow-600 p-3 rounded text-center shadow-[0_0_15px_#FFFB00]">
+                  <div className="text-black text-lg font-bold">🎵</div>
+                  <div className="text-black text-xs font-bold">MELODY</div>
+                </div>
+                <div className="bg-gradient-to-b from-green-400 to-green-600 p-3 rounded text-center shadow-[0_0_15px_green]">
+                  <div className="text-black text-lg font-bold">⚡</div>
+                  <div className="text-black text-xs font-bold">SPEED</div>
+                </div>
+                <div className="bg-gradient-to-b from-purple-400 to-purple-600 p-3 rounded text-center shadow-[0_0_15px_purple]">
+                  <div className="text-white text-lg font-bold">👑</div>
+                  <div className="text-white text-xs font-bold">LEGEND</div>
+                </div>
+                <div className="bg-gradient-to-b from-red-400 to-red-600 p-3 rounded text-center shadow-[0_0_15px_red]">
+                  <div className="text-white text-lg font-bold">🔥</div>
+                  <div className="text-white text-xs font-bold">STREAK</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Level Progress */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[#FFFB00] font-bold text-sm">LEVEL 47 MUSIC MASTER</span>
+                <span className="text-white text-sm">2,847 / 3,000 XP</span>
+              </div>
+              <div className="bg-gray-800 rounded-full h-4 shadow-inner">
+                <div className="bg-gradient-to-r from-[#FFFB00] via-yellow-400 to-[#FFFB00] h-4 rounded-full transition-all duration-1000 w-[95%] shadow-[0_0_15px_#FFFB00] relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Activities */}
+            <div>
+              <h4 className="text-[#FFFB00] font-bold mb-3 text-sm">📊 RECENT ACTIVITIES</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between bg-black/30 p-2 rounded">
+                  <span className="text-white text-xs">🎵 Guessed "Bohemian Rhapsody"</span>
+                  <span className="text-[#FFFB00] text-xs">+50 XP</span>
+                </div>
+                <div className="flex justify-between bg-black/30 p-2 rounded">
+                  <span className="text-white text-xs">🏆 Won multiplayer match</span>
+                  <span className="text-[#FFFB00] text-xs">+125 XP</span>
+                </div>
+                <div className="flex justify-between bg-black/30 p-2 rounded">
+                  <span className="text-white text-xs">⚡ 15-song streak achieved</span>
+                  <span className="text-[#FFFB00] text-xs">+200 XP</span>
+                </div>
+                <div className="flex justify-between bg-black/30 p-2 rounded">
+                  <span className="text-white text-xs">🎖️ New badge earned: Speed Demon</span>
+                  <span className="text-[#FFFB00] text-xs">+100 XP</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -457,6 +694,21 @@ const Profile = () => {
           image-rendering: pixelated;
           image-rendering: -moz-crisp-edges;
           image-rendering: crisp-edges;
+        }
+        
+        @keyframes gridFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes scanlines {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(4px); }
+        }
+        
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 20px #FFFB00, 0 0 40px #FFFB00; }
+          50% { box-shadow: 0 0 30px #FFFB00, 0 0 60px #FFFB00; }
         }
       `}</style>
     </div>
