@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Profile = () => {
   const navigate = useNavigate();
   const audioRef = useRef(null);
+  const { user, isGuest, guestName, guestAvatar } = useContext(AuthContext);
 
   // Music Player State
   const [currentTrack, setCurrentTrack] = useState({
@@ -21,22 +23,17 @@ const Profile = () => {
     { code: "all", label: "All Songs" },
     { code: "hindi", label: "Hindi" },
     { code: "english", label: "English" },
-    { code: "punjabi", label: "Punjabi" },
     { code: "tamil", label: "Tamil" },
-    { code: "telugu", label: "Telugu" },
-    { code: "malayalam", label: "Malayalam" },
-    { code: "bengali", label: "Bengali" },
     { code: "korean", label: "K-Pop" },
     { code: "spanish", label: "Spanish" }
   ];
 
   const [selectedLanguage, setSelectedLanguage] = useState("all");
 
-  // Random data matching the screenshot
-  const userStats = {
-    stat1: 50,
-    stat2: 24,
-    stat3: 50,
+  const playerStats = {
+    stat1: "24",
+    stat2: "89%", 
+    stat3: "156",
     stat4: "1.5m"
   };
 
@@ -85,7 +82,6 @@ const Profile = () => {
         all: [
           { name: "Tum Hi Ho", artist: "Arijit Singh", movie: "Aashiqui 2", videoId: "Umqb9KENgmk" },
           { name: "Shape of You", artist: "Ed Sheeran", movie: "Single", videoId: "JGwWNGJdvx8" },
-          { name: "Laung Laachi", artist: "Mannat Noor", movie: "Laung Laachi", videoId: "KaLxjDFQsVw" },
           { name: "Despacito", artist: "Luis Fonsi", movie: "Single", videoId: "kJQP7kiw5Fk" }
         ],
         hindi: [
@@ -104,14 +100,6 @@ const Profile = () => {
           { name: "Bad Habits", artist: "Ed Sheeran", movie: "Single", videoId: "orJSJGHjBLI" },
           { name: "Watermelon Sugar", artist: "Harry Styles", movie: "Single", videoId: "E07s5ZYygMg" }
         ],
-        punjabi: [
-          { name: "Laung Laachi", artist: "Mannat Noor", movie: "Laung Laachi", videoId: "KaLxjDFQsVw" },
-          { name: "Brown Munde", artist: "AP Dhillon", movie: "Single", videoId: "VNs_cCtdbPc" },
-          { name: "Excuses", artist: "AP Dhillon", movie: "Single", videoId: "qOyYnyiiI20" },
-          { name: "Insane", artist: "AP Dhillon", movie: "Single", videoId: "7WBvonuTXUY" },
-          { name: "295", artist: "Sidhu Moose Wala", movie: "Single", videoId: "YPgGzlB57EM" },
-          { name: "Bambiha Bole", artist: "Sidhu Moose Wala", movie: "Single", videoId: "Rn3EFBKjCDY" }
-        ],
         tamil: [
           { name: "Vaathi Coming", artist: "Anirudh", movie: "Master", videoId: "DOMcaWxLxe8" },
           { name: "Rowdy Baby", artist: "Dhanush", movie: "Maari 2", videoId: "x6Q7c9RyMzk" },
@@ -120,30 +108,7 @@ const Profile = () => {
           { name: "Oo Antava", artist: "Indravathi Chauhan", movie: "Pushpa", videoId: "geRLS9sLW2E" },
           { name: "Naatu Naatu", artist: "Rahul Sipligunj", movie: "RRR", videoId: "WDBfwsODGB0" }
         ],
-        telugu: [
-          { name: "Butta Bomma", artist: "Armaan Malik", movie: "Ala Vaikuntapuramlo", videoId: "JjVXngPaZGY" },
-          { name: "Ramuloo Ramulaa", artist: "Anurag Kulkarni", movie: "Ala Vaikuntapuramlo", videoId: "BddP6PYo2gs" },
-          { name: "Samajavaragamana", artist: "Sid Sriram", movie: "Ala Vaikuntapuramlo", videoId: "HiqE15Z12rk" },
-          { name: "Naatu Naatu", artist: "Rahul Sipligunj", movie: "RRR", videoId: "WDBfwsODGB0" },
-          { name: "Oo Antava", artist: "Indravathi Chauhan", movie: "Pushpa", videoId: "geRLS9sLW2E" },
-          { name: "Srivalli", artist: "Javed Ali", movie: "Pushpa", videoId: "9sOyJ-bKehE" }
-        ],
-        malayalam: [
-          { name: "Malare", artist: "Vijay Yesudas", movie: "Premam", videoId: "CJrVZCbKxsE" },
-          { name: "Pathivaayi Njan", artist: "Shaan Rahman", movie: "Bangalore Days", videoId: "EqgFGQ1gkug" },
-          { name: "Mukkathe Penne", artist: "Vineeth Sreenivasan", movie: "Ennu Ninte Moideen", videoId: "yFsA0xwHP88" },
-          { name: "Varaha Roopam", artist: "Vishnu Shyam", movie: "Kantara", videoId: "5F3pkyNykz8" },
-          { name: "Jimikki Kammal", artist: "Ranjith Unni", movie: "Velipadinte Pusthakam", videoId: "d7sQp8kzIkQ" },
-          { name: "Darshana", artist: "Sharreth", movie: "Oru Vadakkan Selfie", videoId: "y67x1Hb2J2o" }
-        ],
-        bengali: [
-          { name: "Tomake Chai", artist: "Arijit Singh", movie: "Gangster", videoId: "FGlGpwKXqN8" },
-          { name: "Ek Din", artist: "Anupam Roy", movie: "Autograph", videoId: "4vXZge3VhfQ" },
-          { name: "Amake Amar Moto", artist: "Anupam Roy", movie: "Autograph", videoId: "Q9FxJhHTJOQ" },
-          { name: "Egiye De", artist: "Anupam Roy", movie: "Single", videoId: "tHcyJNAx8R8" },
-          { name: "Chokher Bali", artist: "Shreya Ghoshal", movie: "Choker Bali", videoId: "dPLJpffGDbc" },
-          { name: "Mon Majhi Re", artist: "Arijit Singh", movie: "Boss", videoId: "5rJOCUxGEaY" }
-        ],
+    
         korean: [
           { name: "Dynamite", artist: "BTS", movie: "Single", videoId: "gdZLi9oWNZg" },
           { name: "Gangnam Style", artist: "PSY", movie: "Single", videoId: "9bZkp7q19f0" },
@@ -223,25 +188,6 @@ const Profile = () => {
     }
   };
 
-  // Auto-advance to next song after typical duration (3-4 minutes)
-  useEffect(() => {
-    let songTimer;
-    
-    if (isPlaying && autoplayEnabled && currentTrack.videoId) {
-      // Set timer for 4 minutes (240 seconds) - typical song length
-      songTimer = setTimeout(() => {
-        console.log("Song timeout reached, playing next track...");
-        handleSongEnd();
-      }, 240000); // 4 minutes
-    }
-
-    return () => {
-      if (songTimer) {
-        clearTimeout(songTimer);
-      }
-    };
-  }, [isPlaying, currentTrack.videoId, autoplayEnabled, selectedLanguage]);
-
   // YouTube API event listener for song end detection
   useEffect(() => {
     // Load YouTube API if not already loaded
@@ -254,7 +200,19 @@ const Profile = () => {
         console.log('YouTube API loaded');
       };
     }
-  }, []);
+
+    // Set up periodic check for video end (fallback method)
+    const checkVideoEnd = setInterval(() => {
+      const iframe = document.getElementById('youtube-player');
+      if (iframe && isPlaying && autoplayEnabled) {
+        // Try to get video duration and current time (this is a simplified approach)
+        // In a real implementation, you'd use YouTube API's onStateChange event
+        // For now, we'll use a timeout-based approach as fallback
+      }
+    }, 1000);
+
+    return () => clearInterval(checkVideoEnd);
+  }, [isPlaying, autoplayEnabled]);
 
   // Load initial track with autoplay
   useEffect(() => {
@@ -262,11 +220,12 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="min-h-screen text-white font-silkscreen relative overflow-hidden" style={{
+    <div className="h-screen text-white font-silkscreen relative overflow-hidden" style={{
       backgroundImage: 'url(/profilebackground.png)',
       backgroundRepeat: 'repeat',
-      backgroundSize: 'auto',
-      imageRendering: 'pixelated'
+      backgroundSize: '120px 120px',
+      imageRendering: 'pixelated',
+      backgroundAttachment: 'fixed'
     }}>
       {/* Animated grid overlay */}
       <div className="absolute inset-0 opacity-10 z-0">
@@ -275,7 +234,7 @@ const Profile = () => {
             linear-gradient(rgba(255, 251, 0, 0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 251, 0, 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '40px 40px',
+          backgroundSize: '120px 120px',
           animation: 'gridFloat 20s ease-in-out infinite'
         }}></div>
       </div>
@@ -302,251 +261,75 @@ const Profile = () => {
           <button 
             onClick={() => navigate("/landing")}
             className="w-6 h-6 bg-[#FFFB00] rounded flex items-center justify-center hover:bg-yellow-300 transition-colors text-black font-bold"
-          >−</button>
-          <button 
-            onClick={() => navigate("/landing")}
-            className="w-6 h-6 bg-[#FFFB00] rounded flex items-center justify-center hover:bg-yellow-300 transition-colors text-black font-bold"
           >×</button>
         </div>
       </div>
 
-      <div className="relative z-10 flex h-[calc(100vh-60px)]">
-        {/* Left Column */}
-        <div className="w-80 p-6 space-y-6">
-          {/* Profile Section */}
-          <div className="relative">
+      <div className="relative z-10 flex h-full">
+        {/* Left Column - Larger and Full Height */}
+        <div className="w-96 p-8 space-y-6 flex flex-col">
+          {/* Profile Section - Larger */}
+          <div className="text-center">
             <img 
-              src="/glowing-avatar.png" 
+              src={
+                user?.photoURL || 
+                (isGuest && guestAvatar ? `/avatars/${guestAvatar}.png` : "/pfp.png")
+              }
               alt="Profile Avatar" 
-              className="w-32 h-32 rounded-full shadow-[0_0_30px_#FFFB00,0_0_60px_#FFFB00,0_0_90px_#FFFB00] pixelated mx-auto"
+              className="w-40 h-40 rounded-full mx-auto object-cover profile-glow"
               style={{
-                imageRendering: 'pixelated',
-                filter: 'brightness(1.2) contrast(1.3)'
+                border: '4px solid #FFFB00',
+                filter: 'brightness(1.1) contrast(1.2)'
               }}
             />
+            <h2 className="text-2xl font-bold text-[#FFFB00] mt-4 mb-2">
+              {user?.displayName || guestName || "Guest Player"}
+            </h2>
+            <p className="text-gray-400 text-sm">Level 47 • {user?.displayName || guestName || "Music Enthusiast"}</p>
           </div>
 
-          {/* Quick Stats Card */}
-          <div className="bg-gray-900/80 backdrop-blur-sm p-4 rounded border-l-4 border-[#FFFB00]">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[#FFFB00] font-bold text-sm">Quick Stats</h3>
-              <span className="text-gray-400">▼</span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-400">Games Played:</span>
-                <span className="text-white font-bold">127</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-400">Win Rate:</span>
-                <span className="text-[#FFFB00] font-bold">84%</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-400">Current Streak:</span>
-                <span className="text-[#FFFB00] font-bold">12</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Achievements Card */}
-          <div className="bg-gray-900/80 backdrop-blur-sm p-4 rounded border-l-4 border-[#FFFB00]">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <span className="text-[#FFFB00]">🏆</span>
-                <span className="text-[#FFFB00] font-bold text-sm">Achievements</span>
-              </div>
-              <span className="text-gray-400">▼</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 mt-3">
-              <div className="bg-gray-800/60 p-2 rounded text-center">
-                <div className="text-lg">🎵</div>
-                <div className="text-xs text-[#FFFB00]">Music Expert</div>
-              </div>
-              <div className="bg-gray-800/60 p-2 rounded text-center">
-                <div className="text-lg">⚡</div>
-                <div className="text-xs text-[#FFFB00]">Speed Demon</div>
-              </div>
-              <div className="bg-gray-800/60 p-2 rounded text-center">
-                <div className="text-lg">🔥</div>
-                <div className="text-xs text-[#FFFB00]">Streak Master</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Activity Card */}
-          <div className="bg-gray-900/80 backdrop-blur-sm p-4 rounded border-l-4 border-[#FFFB00]">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[#FFFB00] font-bold text-sm">Recent Activity</h3>
-              <span className="text-gray-400">▼</span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="text-gray-300">Won "Pop Hits" room</span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs">
-                <div className="w-2 h-2 bg-[#FFFB00] rounded-full"></div>
-                <span className="text-gray-300">12-game win streak</span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs">
-                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <span className="text-gray-300">Leveled up to 4</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="flex-1 p-6">
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-4xl font-bold text-[#FFFB00] mb-2">Music Guessing</h1>
-            <p className="text-gray-400 text-sm">Level 4 Music Enthusiast • Kinshuk's Gaming Profile</p>
-          </div>
-
-          {/* Stats Row */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
-            <div className="bg-gray-800/60 p-4 rounded text-center">
-              <div className="text-[#FFFB00] text-xs mb-1">SONGS PLAYED</div>
-              <div className="text-white text-2xl font-bold">247</div>
-            </div>
-            <div className="bg-gray-800/60 p-4 rounded text-center">
-              <div className="text-[#FFFB00] text-xs mb-1">WIN RATE</div>
-              <div className="text-white text-2xl font-bold">84%</div>
-            </div>
-            <div className="bg-gray-800/60 p-4 rounded text-center">
-              <div className="text-[#FFFB00] text-xs mb-1">AVG TIME</div>
-              <div className="text-white text-2xl font-bold">8.2s</div>
-            </div>
-            <div className="bg-gray-800/60 p-4 rounded text-center">
-              <div className="text-[#FFFB00] text-xs mb-1">LEVEL</div>
-              <div className="text-white text-2xl font-bold">4</div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-8">
-            {/* Skills Progress */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[#FFFB00] font-bold text-xl">Skills Progress</h2>
-                <button className="text-[#FFFB00] text-xl hover:text-yellow-300">+</button>
-              </div>
+          {/* Music Player - Cassette at top position */}
+          <div>
+            <div className="relative">
+              <img 
+                src="/cassette.png" 
+                alt="Retro Cassette Player" 
+                className="w-full h-auto pixelated opacity-90 rounded-lg"
+              />
               
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-lg mb-3 font-bold">
-                    <span className="text-white">Music Knowledge</span>
-                    <span className="text-[#FFFB00]">89/100</span>
-                  </div>
-                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
-                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[89%] shadow-[0_0_15px_#FFFB00]"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-lg mb-3 font-bold">
-                    <span className="text-white">Quick Recognition</span>
-                    <span className="text-[#FFFB00]">76/100</span>
-                  </div>
-                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
-                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[76%] shadow-[0_0_15px_#FFFB00]"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-lg mb-3 font-bold">
-                    <span className="text-white">Genre Master</span>
-                    <span className="text-[#FFFB00]">63/100</span>
-                  </div>
-                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
-                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[63%] shadow-[0_0_15px_#FFFB00]"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-lg mb-3 font-bold">
-                    <span className="text-white">Streak Builder</span>
-                    <span className="text-[#FFFB00]">92/100</span>
-                  </div>
-                  <div className="bg-gray-700 rounded-full h-6 shadow-inner">
-                    <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-6 rounded-full transition-all duration-1000 w-[92%] shadow-[0_0_15px_#FFFB00]"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Music Player */}
-            <div>
-              <div className="relative">
-                <img 
-                  src="/cassette.png" 
-                  alt="Retro Cassette Player" 
-                  className="w-full h-auto pixelated opacity-90"
+              {/* Hidden YouTube Player */}
+              {currentTrack.videoId && (
+                <iframe
+                  id="youtube-player"
+                  src={`https://www.youtube.com/embed/${currentTrack.videoId}?enablejsapi=1`}
+                  style={{ display: 'none' }}
+                  allow="autoplay; encrypted-media"
                 />
-                
-                {/* Hidden YouTube Player */}
-                {currentTrack.videoId && (
-                  <iframe
-                    id="youtube-player"
-                    src={`https://www.youtube.com/embed/${currentTrack.videoId}?enablejsapi=1`}
-                    style={{ display: 'none' }}
-                    allow="autoplay; encrypted-media"
-                  />
-                )}
-                
-                {/* Music Player Controls Overlay */}
-                <div className="absolute inset-0 flex flex-col justify-between p-4">
-                  {/* Track Info with Language Selector */}
-                  <div className="flex justify-between items-start">
-                    <div className="bg-black/80 backdrop-blur-sm rounded px-3 py-2 flex-1 mr-2">
-                      <div className="text-[#FFFB00] text-xs font-bold">NOW PLAYING</div>
-                      <div className="text-yellow-300 text-xs font-bold truncate">
-                        {isLoading ? "Loading..." : currentTrack.name}
-                      </div>
-                      <div className="text-gray-300 text-xs truncate">
-                        {isLoading ? "Please wait" : currentTrack.artist}
-                      </div>
-                      {currentTrack.movie && (
-                        <div className="text-gray-400 text-xs truncate">
-                          From: {currentTrack.movie}
-                        </div>
-                      )}
+              )}
+              
+              {/* Music Info Overlay - positioned to show cassette clearly */}
+              <div className="absolute inset-0 flex flex-col justify-center items-center">
+                <div className="bg-black/40 backdrop-blur-sm rounded-lg p-3 mx-8 mt-6 max-w-[200px]">
+                  <div className="text-center mb-2">
+                    <div className="text-[#FFFB00] font-bold text-xs mb-1 truncate">
+                      {isLoading ? "Loading..." : currentTrack.name}
                     </div>
-                    
-                    {/* Language Dropdown */}
-                    <div className="relative">
-                      <button 
-                        onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                        className="bg-[#FFFB00] text-black px-2 py-1 rounded text-xs font-bold hover:bg-yellow-300 transition-colors"
-                      >
-                        {languages.find(l => l.code === selectedLanguage)?.label} ▼
-                      </button>
-                      
-                      {showLanguageDropdown && (
-                        <div className="absolute top-full right-0 mt-1 bg-black/90 backdrop-blur-sm rounded border border-[#FFFB00] z-50 min-w-[100px]">
-                          {languages.map((language) => (
-                            <button
-                              key={language.code}
-                              onClick={() => {
-                                setSelectedLanguage(language.code);
-                                setShowLanguageDropdown(false);
-                                fetchRandomTrack(language.code, autoplayEnabled); // Fetch song in selected language with autoplay
-                              }}
-                              className={`block w-full text-left px-3 py-2 text-xs hover:bg-[#FFFB00] hover:text-black transition-colors ${
-                                selectedLanguage === language.code ? 'text-[#FFFB00] font-bold' : 'text-white'
-                              }`}
-                            >
-                              {language.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                    <div className="text-gray-300 text-xs truncate">
+                      {currentTrack.artist}
                     </div>
+                    {currentTrack.movie && (
+                      <div className="text-gray-400 text-xs truncate">
+                        {currentTrack.movie}
+                      </div>
+                    )}
                   </div>
                   
-                  {/* Control Buttons */}
-                  <div className="flex justify-center space-x-4">
+                  {/* Control Buttons - smaller and less intrusive */}
+                  <div className="flex justify-center space-x-2 mb-2">
                     <button 
                       onClick={skipTrack}
                       disabled={isLoading}
-                      className={`w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold ${
+                      className={`w-6 h-6 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_10px_#FFFB00] text-xs hover:scale-110 font-bold ${
                         isLoading ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
@@ -555,7 +338,7 @@ const Profile = () => {
                     <button 
                       onClick={togglePlay}
                       disabled={!currentTrack.videoId || isLoading}
-                      className={`w-12 h-12 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_20px_#FFFB00] text-xl hover:scale-110 font-bold ${
+                      className={`w-8 h-8 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-sm hover:scale-110 font-bold ${
                         (!currentTrack.videoId || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
@@ -564,123 +347,169 @@ const Profile = () => {
                     <button 
                       onClick={skipTrack}
                       disabled={isLoading}
-                      className={`w-10 h-10 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_15px_#FFFB00] text-lg hover:scale-110 font-bold ${
+                      className={`w-6 h-6 bg-[#FFFB00] text-black rounded flex items-center justify-center hover:bg-yellow-300 transition-all shadow-[0_0_10px_#FFFB00] text-xs hover:scale-110 font-bold ${
                         isLoading ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
                       ⏭
                     </button>
                   </div>
+
+                  {/* Language Dropdown - smaller */}
+                  <div className="relative flex justify-center">
+                    <button 
+                      onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                      className="bg-[#FFFB00] text-black px-2 py-1 rounded text-xs font-bold hover:bg-yellow-300 transition-colors"
+                    >
+                      {languages.find(l => l.code === selectedLanguage)?.label} ▼
+                    </button>
+                    
+                    {showLanguageDropdown && (
+                      <div className="absolute bottom-full mb-2 bg-black/60 backdrop-blur-sm rounded border border-[#FFFB00] z-50 min-w-[120px]">
+                        {languages.map((language) => (
+                          <button
+                            key={language.code}
+                            onClick={() => {
+                              setSelectedLanguage(language.code);
+                              setShowLanguageDropdown(false);
+                              fetchRandomTrack(language.code, autoplayEnabled);
+                            }}
+                            className={`block w-full text-left px-3 py-2 text-xs hover:bg-[#FFFB00] hover:text-black transition-colors ${
+                              selectedLanguage === language.code ? 'text-[#FFFB00] font-bold' : 'text-white'
+                            }`}
+                          >
+                            {language.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                
-                {/* Song Status Indicator */}
-                <div className="absolute bottom-2 left-2">
-                  <div className={`w-3 h-3 rounded-full ${
-                    currentTrack.videoId ? 'bg-green-400 shadow-[0_0_10px_#00ff00]' : 'bg-red-400 shadow-[0_0_10px_#ff0000]'
-                  }`}></div>
-                </div>
-                
-                {/* Checkered Pattern */}
-                <div className="absolute bottom-4 right-4 w-10 h-10 bg-[#FFFB00] rounded shadow-[0_0_15px_#FFFB00]" style={{
-                  backgroundImage: `
-                    linear-gradient(45deg, black 25%, transparent 25%), 
-                    linear-gradient(-45deg, black 25%, transparent 25%), 
-                    linear-gradient(45deg, transparent 75%, black 75%), 
-                    linear-gradient(-45deg, transparent 75%, black 75%)
-                  `,
-                  backgroundSize: '10px 10px',
-                  backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
-                }}></div>
               </div>
             </div>
           </div>
 
-          {/* Gaming Zone Section */}
-          <div className="mt-8 bg-gray-900/80 backdrop-blur-sm p-6 rounded border border-[#FFFB00]/30">
-            <div className="flex items-center mb-4">
-              <span className="text-[#FFFB00] text-2xl mr-3">🎮</span>
-              <h3 className="text-white font-bold text-xl">Gaming Zone</h3>
-            </div>
-            
-            {/* Retro Game Stats */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
-                <div className="text-[#FFFB00] text-xs font-bold mb-2">🏆 CHAMPIONSHIP</div>
-                <div className="text-white text-lg font-bold">Rank #47</div>
-                <div className="text-gray-400 text-xs">Global Leaderboard</div>
+          {/* Quick Stats and Achievements - Grouped closer */}
+          <div className="space-y-3">
+            {/* Quick Stats Card - Smaller */}
+            <div className="bg-gray-900/80 backdrop-blur-sm p-4 rounded border-l-4 border-[#FFFB00]">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-[#FFFB00] font-bold text-base">Quick Stats</h3>
+                <span className="text-gray-400">▼</span>
               </div>
-              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
-                <div className="text-[#FFFB00] text-xs font-bold mb-2">⚡ REACTION TIME</div>
-                <div className="text-white text-lg font-bold">2.3s</div>
-                <div className="text-gray-400 text-xs">Average Response</div>
-              </div>
-              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
-                <div className="text-[#FFFB00] text-xs font-bold mb-2">🎵 MUSIC GENRES</div>
-                <div className="text-white text-lg font-bold">127</div>
-                <div className="text-gray-400 text-xs">Songs Mastered</div>
-              </div>
-              <div className="bg-black/50 p-4 rounded border border-[#FFFB00]/20">
-                <div className="text-[#FFFB00] text-xs font-bold mb-2">🔥 DAILY STREAK</div>
-                <div className="text-white text-lg font-bold">15 Days</div>
-                <div className="text-gray-400 text-xs">Current Run</div>
-              </div>
-            </div>
-
-            {/* Retro Badges */}
-            <div className="mb-6">
-              <h4 className="text-[#FFFB00] font-bold mb-3 text-sm">🎖️ RETRO BADGES</h4>
-              <div className="grid grid-cols-4 gap-3">
-                <div className="bg-gradient-to-b from-[#FFFB00] to-yellow-600 p-3 rounded text-center shadow-[0_0_15px_#FFFB00]">
-                  <div className="text-black text-lg font-bold">🎵</div>
-                  <div className="text-black text-xs font-bold">MELODY</div>
-                </div>
-                <div className="bg-gradient-to-b from-green-400 to-green-600 p-3 rounded text-center shadow-[0_0_15px_green]">
-                  <div className="text-black text-lg font-bold">⚡</div>
-                  <div className="text-black text-xs font-bold">SPEED</div>
-                </div>
-                <div className="bg-gradient-to-b from-purple-400 to-purple-600 p-3 rounded text-center shadow-[0_0_15px_purple]">
-                  <div className="text-white text-lg font-bold">👑</div>
-                  <div className="text-white text-xs font-bold">LEGEND</div>
-                </div>
-                <div className="bg-gradient-to-b from-red-400 to-red-600 p-3 rounded text-center shadow-[0_0_15px_red]">
-                  <div className="text-white text-lg font-bold">🔥</div>
-                  <div className="text-white text-xs font-bold">STREAK</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Level Progress */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[#FFFB00] font-bold text-sm">LEVEL 47 MUSIC MASTER</span>
-                <span className="text-white text-sm">2,847 / 3,000 XP</span>
-              </div>
-              <div className="bg-gray-800 rounded-full h-4 shadow-inner">
-                <div className="bg-gradient-to-r from-[#FFFB00] via-yellow-400 to-[#FFFB00] h-4 rounded-full transition-all duration-1000 w-[95%] shadow-[0_0_15px_#FFFB00] relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Activities */}
-            <div>
-              <h4 className="text-[#FFFB00] font-bold mb-3 text-sm">📊 RECENT ACTIVITIES</h4>
               <div className="space-y-2">
-                <div className="flex justify-between bg-black/30 p-2 rounded">
-                  <span className="text-white text-xs">🎵 Guessed "Bohemian Rhapsody"</span>
-                  <span className="text-[#FFFB00] text-xs">+50 XP</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Games Played:</span>
+                  <span className="text-white font-bold">127</span>
                 </div>
-                <div className="flex justify-between bg-black/30 p-2 rounded">
-                  <span className="text-white text-xs">🏆 Won multiplayer match</span>
-                  <span className="text-[#FFFB00] text-xs">+125 XP</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Win Rate:</span>
+                  <span className="text-[#FFFB00] font-bold">84%</span>
                 </div>
-                <div className="flex justify-between bg-black/30 p-2 rounded">
-                  <span className="text-white text-xs">⚡ 15-song streak achieved</span>
-                  <span className="text-[#FFFB00] text-xs">+200 XP</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Current Streak:</span>
+                  <span className="text-[#FFFB00] font-bold">12</span>
                 </div>
-                <div className="flex justify-between bg-black/30 p-2 rounded">
-                  <span className="text-white text-xs">🎖️ New badge earned: Speed Demon</span>
-                  <span className="text-[#FFFB00] text-xs">+100 XP</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Total Score:</span>
+                  <span className="text-[#FFFB00] font-bold">15,247</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements Card - Smaller */}
+            <div className="bg-gray-900/80 backdrop-blur-sm p-4 rounded border-l-4 border-[#FFFB00]">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-[#FFFB00] text-lg">🏆</span>
+                  <span className="text-[#FFFB00] font-bold text-base">Achievements</span>
+                </div>
+                <span className="text-gray-400">▼</span>
+              </div>
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                <div className="bg-gray-800/60 p-3 rounded text-center">
+                  <div className="text-lg mb-1">🎵</div>
+                  <div className="text-xs text-[#FFFB00] font-bold">Music Expert</div>
+                </div>
+                <div className="bg-gray-800/60 p-3 rounded text-center">
+                  <div className="text-lg mb-1">⚡</div>
+                  <div className="text-xs text-[#FFFB00] font-bold">Speed Demon</div>
+                </div>
+                <div className="bg-gray-800/60 p-3 rounded text-center">
+                  <div className="text-lg mb-1">🔥</div>
+                  <div className="text-xs text-[#FFFB00] font-bold">Streak Master</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Full Height Layout */}
+        <div className="flex-1 p-8 flex flex-col justify-between h-full">
+          {/* Header - Larger */}
+          <div>
+            <h1 className="text-5xl font-bold text-[#FFFB00] mb-3">Music Guessing</h1>
+            <p className="text-gray-400 text-lg">Level 4 Music Enthusiast • Kinshuk's Gaming Profile</p>
+          </div>
+
+          {/* Stats Row - Larger */}
+          <div className="grid grid-cols-4 gap-6">
+            <div className="bg-gray-800/60 p-6 rounded text-center">
+              <div className="text-[#FFFB00] text-sm mb-2 font-bold">SONGS PLAYED</div>
+              <div className="text-white text-3xl font-bold">247</div>
+            </div>
+            <div className="bg-gray-800/60 p-6 rounded text-center">
+              <div className="text-[#FFFB00] text-sm mb-2 font-bold">WIN RATE</div>
+              <div className="text-white text-3xl font-bold">84%</div>
+            </div>
+            <div className="bg-gray-800/60 p-6 rounded text-center">
+              <div className="text-[#FFFB00] text-sm mb-2 font-bold">AVG TIME</div>
+              <div className="text-white text-3xl font-bold">8.2s</div>
+            </div>
+            <div className="bg-gray-800/60 p-6 rounded text-center">
+              <div className="text-[#FFFB00] text-sm mb-2 font-bold">LEVEL</div>
+              <div className="text-white text-3xl font-bold">4</div>
+            </div>
+          </div>
+
+          {/* Skills Section - Larger and Centered */}
+          <div className="flex-1 flex flex-col justify-center">
+            <h2 className="text-2xl font-bold text-[#FFFB00] mb-8 text-center">Musical Skills</h2>
+            <div className="space-y-8">
+              <div>
+                <div className="flex justify-between text-xl mb-4 font-bold">
+                  <span className="text-white">Music Knowledge</span>
+                  <span className="text-[#FFFB00]">89/100</span>
+                </div>
+                <div className="bg-gray-700 rounded-full h-8 shadow-inner">
+                  <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-8 rounded-full transition-all duration-1000 w-[89%] shadow-[0_0_20px_#FFFB00]"></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xl mb-4 font-bold">
+                  <span className="text-white">Quick Recognition</span>
+                  <span className="text-[#FFFB00]">76/100</span>
+                </div>
+                <div className="bg-gray-700 rounded-full h-8 shadow-inner">
+                  <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-8 rounded-full transition-all duration-1000 w-[76%] shadow-[0_0_20px_#FFFB00]"></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xl mb-4 font-bold">
+                  <span className="text-white">Genre Master</span>
+                  <span className="text-[#FFFB00]">63/100</span>
+                </div>
+                <div className="bg-gray-700 rounded-full h-8 shadow-inner">
+                  <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-8 rounded-full transition-all duration-1000 w-[63%] shadow-[0_0_20px_#FFFB00]"></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xl mb-4 font-bold">
+                  <span className="text-white">Streak Builder</span>
+                  <span className="text-[#FFFB00]">92/100</span>
+                </div>
+                <div className="bg-gray-700 rounded-full h-8 shadow-inner">
+                  <div className="bg-gradient-to-r from-[#FFFB00] to-yellow-300 h-8 rounded-full transition-all duration-1000 w-[92%] shadow-[0_0_20px_#FFFB00]"></div>
                 </div>
               </div>
             </div>
@@ -709,6 +538,26 @@ const Profile = () => {
         @keyframes glow {
           0%, 100% { box-shadow: 0 0 20px #FFFB00, 0 0 40px #FFFB00; }
           50% { box-shadow: 0 0 30px #FFFB00, 0 0 60px #FFFB00; }
+        }
+        
+        @keyframes profile-glow {
+          0% {
+            box-shadow: 0 0 20px rgba(255, 251, 0, 0.6), 0 0 30px rgba(255, 251, 0, 0.4), 0 0 40px rgba(255, 251, 0, 0.2);
+            transform: scale(1);
+          }
+          100% {
+            box-shadow: 0 0 30px rgba(255, 251, 0, 0.8), 0 0 40px rgba(255, 251, 0, 0.6), 0 0 50px rgba(255, 251, 0, 0.4);
+            transform: scale(1.02);
+          }
+        }
+        
+        .profile-glow {
+          animation: profile-glow 2s ease-in-out infinite alternate;
+        }
+        
+        /* Smooth scrolling */
+        html {
+          scroll-behavior: smooth;
         }
       `}</style>
     </div>
