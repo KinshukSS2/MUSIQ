@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import googleIcon from "../assets/google.svg";
 import {
@@ -9,6 +9,7 @@ import {
 import { auth, provider } from "../config/firebase";
 import AvatarGrid from "../components/common/AvatarGrid";
 import Navbar from "../components/common/Navbar";
+import { AuthContext } from "../context/AuthContext";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -17,6 +18,7 @@ const Signup = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
 
   const validateFields = () => {
     const newErrors = {};
@@ -63,15 +65,17 @@ const Signup = () => {
       // Sync user with backend
       await syncUserWithBackend(result.user, selectedAvatar, name);
 
+      const userData = {
+        name,
+        uid: result.user.uid,
+        avatar: selectedAvatar,
+      };
+
       localStorage.setItem("token", token);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name,
-          uid: result.user.uid,
-          avatar: selectedAvatar,
-        })
-      );
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Update AuthContext as well
+      setUser(userData);
 
       window.location.href = "/landing";
     } catch (err) {
@@ -105,15 +109,17 @@ const Signup = () => {
       // Sync user with backend
       await syncUserWithBackend(result.user, selectedAvatar);
 
+      const userData = {
+        name: result.user.displayName || "Google User",
+        uid: result.user.uid,
+        avatar: selectedAvatar,
+      };
+
       localStorage.setItem("token", token);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: result.user.displayName || "Google User",
-          uid: result.user.uid,
-          avatar: selectedAvatar,
-        })
-      );
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Update AuthContext as well
+      setUser(userData);
 
       window.location.href = "/landing";
     } catch (err) {
