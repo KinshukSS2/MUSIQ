@@ -7,6 +7,38 @@ const Profile = () => {
   const audioRef = useRef(null);
   const { user, isGuest, guestName, guestAvatar } = useContext(AuthContext);
 
+  // Debug logging
+  console.log('AuthContext user:', user);
+  console.log('AuthContext isGuest:', isGuest);
+  console.log('AuthContext guestName:', guestName);
+  
+  // Also check localStorage data like LandingPage does
+  const userData = JSON.parse(localStorage.getItem("user") || "null");
+  const userName = localStorage.getItem("userName");
+  console.log('localStorage user data:', userData);
+  console.log('localStorage userName:', userName);
+  console.log('All localStorage keys:', Object.keys(localStorage));
+  console.log('localStorage "user" raw:', localStorage.getItem("user"));
+  console.log('localStorage "userName" raw:', localStorage.getItem("userName"));    // Debug logging
+  console.log("Profile - User:", user);
+  console.log("Profile - User displayName:", user?.displayName);
+  console.log("Profile - User email:", user?.email);
+  console.log("Profile - IsGuest:", isGuest);
+  console.log("Profile - GuestName:", guestName);
+  
+  // Check localStorage data
+  const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+  const storedUserName = localStorage.getItem("userName");
+  console.log("Profile - localStorage user:", storedUser);
+  console.log("Profile - localStorage userName:", storedUserName);
+
+  // Debug: Log user data
+  console.log('Profile - User data:', user);
+  console.log('Profile - isGuest:', isGuest);
+  console.log('Profile - guestName:', guestName);
+  console.log('Profile - user displayName:', user?.displayName);
+  console.log('Profile - user email:', user?.email);
+
   // Music Player State
   const [currentTrack, setCurrentTrack] = useState({
     name: "Loading...",
@@ -82,15 +114,17 @@ const Profile = () => {
         all: [
           { name: "Tum Hi Ho", artist: "Arijit Singh", movie: "Aashiqui 2", videoId: "Umqb9KENgmk" },
           { name: "Shape of You", artist: "Ed Sheeran", movie: "Single", videoId: "JGwWNGJdvx8" },
-          { name: "Despacito", artist: "Luis Fonsi", movie: "Single", videoId: "kJQP7kiw5Fk" }
+          { name: "Despacito", artist: "Luis Fonsi", movie: "Single", videoId: "kJQP7kiw5Fk" },
+          { name: "Channa Mereya", artist: "Arijit Singh", movie: "Ae Dil Hai Mushkil", videoId: "bzSTpdcs-EI" },
+          { name: "Rowdy Baby", artist: "Dhanush", movie: "Maari 2", videoId: "x6Q7c9RyMzk" },
         ],
         hindi: [
           { name: "Tum Hi Ho", artist: "Arijit Singh", movie: "Aashiqui 2", videoId: "Umqb9KENgmk" },
-          { name: "Kesariya", artist: "Arijit Singh", movie: "Brahmastra", videoId: "FVOZaRwq54E" },
-          { name: "Apna Bana Le", artist: "Arijit Singh", movie: "Bhediya", videoId: "3haEIhUk47s" },
-          { name: "Tera Ban Jaunga", artist: "Akhil Sachdeva", movie: "Kabir Singh", videoId: "1eWdbMBYlH4" },
-          { name: "Raataan Lambiyan", artist: "Tanishk Bagchi", movie: "Shershaah", videoId: "tpDVfjhKqVo" },
-          { name: "Mann Mera", artist: "Gajendra Verma", movie: "Table No. 21", videoId: "bSrHNshZdT0" }
+          { name: "Channa Mereya", artist: "Arijit Singh", movie: "Ae Dil Hai Mushkil", videoId: "bzSTpdcs-EI" },
+          { name: "Bekhayali", artist: "Sachet Tandon", movie: "Kabir Singh", videoId: "VOLKJJvfAbg" },
+          { name: "Dil Diyan Gallan", artist: "Atif Aslam", movie: "Tiger Zinda Hai", videoId: "SAcpESN_Fk4" }
+          
+       
         ],
         english: [
           { name: "Shape of You", artist: "Ed Sheeran", movie: "Single", videoId: "JGwWNGJdvx8" },
@@ -101,12 +135,9 @@ const Profile = () => {
           { name: "Watermelon Sugar", artist: "Harry Styles", movie: "Single", videoId: "E07s5ZYygMg" }
         ],
         tamil: [
-          { name: "Vaathi Coming", artist: "Anirudh", movie: "Master", videoId: "DOMcaWxLxe8" },
           { name: "Rowdy Baby", artist: "Dhanush", movie: "Maari 2", videoId: "x6Q7c9RyMzk" },
-          { name: "Arabic Kuthu", artist: "Anirudh", movie: "Beast", videoId: "fiAWLyFWGmE" },
           { name: "Enjoy Enjaami", artist: "Dhee", movie: "Single", videoId: "eYq7WapuDLU" },
-          { name: "Oo Antava", artist: "Indravathi Chauhan", movie: "Pushpa", videoId: "geRLS9sLW2E" },
-          { name: "Naatu Naatu", artist: "Rahul Sipligunj", movie: "RRR", videoId: "WDBfwsODGB0" }
+          { name: "Kolaveri Di", artist: "Dhanush", movie: "3", videoId: "YR12Z8f1Dh8" }
         ],
     
         korean: [
@@ -283,9 +314,9 @@ const Profile = () => {
               }}
             />
             <h2 className="text-2xl font-bold text-[#FFFB00] mt-4 mb-2">
-              {user?.displayName || guestName || "Guest Player"}
+              {user?.displayName || user?.email?.split('@')[0] || guestName || userData?.name || userName || "Guest Player"}
             </h2>
-            <p className="text-gray-400 text-sm">Level 47 • {user?.displayName || guestName || "Music Enthusiast"}</p>
+            <p className="text-gray-400 text-sm">Level 47 • {user?.displayName || user?.email?.split('@')[0] || guestName || userData?.name || userName || "Music Enthusiast"}</p>
           </div>
 
           {/* Music Player - Cassette at top position */}
@@ -448,8 +479,10 @@ const Profile = () => {
         <div className="flex-1 p-8 flex flex-col justify-between h-full">
           {/* Header - Larger */}
           <div>
-            <h1 className="text-5xl font-bold text-[#FFFB00] mb-3">Music Guessing</h1>
-            <p className="text-gray-400 text-lg">Level 4 Music Enthusiast • Kinshuk's Gaming Profile</p>
+            <h1 className="text-5xl font-bold text-[#FFFB00] mb-3">Track Tracker</h1>
+            <br></br>
+
+            
           </div>
 
           {/* Stats Row - Larger */}
