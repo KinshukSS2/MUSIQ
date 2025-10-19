@@ -13,12 +13,13 @@ const Login = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
+  const { loginAsUser } = useContext(AuthContext);
 
   const validateEmailLogin = () => {
     const newErrors = {};
     if (!email.trim()) newErrors.email = "Enter your email";
     if (!password.trim()) newErrors.password = "Enter your password";
+    if (!selectedAvatar) newErrors.avatar = "Please select an avatar";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -54,22 +55,22 @@ const Login = () => {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const token = await result.user.getIdToken();
 
-      // Sync user with backend
-      await syncUserWithBackend(result.user);
+      // Sync user with backend with selected avatar
+      await syncUserWithBackend(result.user, selectedAvatar);
 
       const userData = {
         name: result.user.displayName || email,
         uid: result.user.uid,
-        avatar: result.user.photoURL || "",
+        avatar: selectedAvatar,
       };
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       
-      // Update AuthContext as well
-      setUser(userData);
+      // Update AuthContext with proper authType
+      loginAsUser(userData);
 
-      window.location.href = "/landing";
+      navigate("/landing");
     } catch (err) {
       console.error("❌ Email login failed:", err.message);
       let newErrors = {};
@@ -120,12 +121,16 @@ const Login = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       
-      // Update AuthContext as well
-      setUser(userData);
+      // Update AuthContext with proper authType
+      loginAsUser(userData);
 
-      window.location.href = "/landing";
+      navigate("/landing");
     } catch (err) {
       console.error("❌ Google login failed:", err.message);
+      setErrors((prev) => ({
+        ...prev,
+        general: "Google login failed. Please try again.",
+      }));
     }
   };
 
