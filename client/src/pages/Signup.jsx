@@ -18,7 +18,7 @@ const Signup = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
+  const { loginAsUser } = useContext(AuthContext);
 
   const validateFields = () => {
     const newErrors = {};
@@ -74,10 +74,10 @@ const Signup = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       
-      // Update AuthContext as well
-      setUser(userData);
+      // Update AuthContext with proper authType
+      loginAsUser(userData);
 
-      window.location.href = "/landing";
+      navigate("/landing");
     } catch (err) {
       console.error("❌ Signup failed:", err.message);
       const newErrors = {};
@@ -118,10 +118,10 @@ const Signup = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       
-      // Update AuthContext as well
-      setUser(userData);
+      // Update AuthContext with proper authType
+      loginAsUser(userData);
 
-      window.location.href = "/landing";
+      navigate("/landing");
     } catch (err) {
       console.error("Google signup failed:", err.message);
       setErrors((prev) => ({
