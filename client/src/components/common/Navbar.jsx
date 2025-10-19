@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, LogOut } from "lucide-react"; // hamburger + close icons
 import { signOut } from "firebase/auth";
 import { auth } from "../../config/firebase";
+import { AuthContext } from "../../context/AuthContext";
 import soundManager from "../../utils/soundManager";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { logout } = useContext(AuthContext);
 
   const navItems = [
     { label: "Home", path: "/landing" },
@@ -56,11 +58,27 @@ export default function Navbar() {
       await soundManager.initOnUserInteraction();
       soundManager.play('success');
       
+      // Sign out from Firebase
       await signOut(auth);
+      
+      // Clear all authentication data
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("userAvatar");
-      navigate("/login");
+      localStorage.removeItem("guest");
+      
+      // Update AuthContext state
+      logout();
+      
+      // Navigate to login and replace history to prevent back button access
+      navigate("/login", { replace: true });
+      
+      // Clear browser history to prevent back button access to protected pages
+      window.history.pushState(null, null, "/login");
+      window.onpopstate = function() {
+        window.history.pushState(null, null, "/login");
+      };
+      
     } catch (error) {
       console.error("Logout failed:", error);
     }
