@@ -220,7 +220,6 @@ class SoundManager {
     }
 
     return buffer;
-    return buffer;
   }
 
   // Create an increment sound (rising pitch)
