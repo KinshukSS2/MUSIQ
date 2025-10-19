@@ -27,7 +27,7 @@ const Login = () => {
   const syncUserWithBackend = async (user, avatar = "") => {
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:5000/api/user/sync", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/user/sync`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

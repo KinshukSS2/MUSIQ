@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 // Connect to the backend server
-const socket = io("http://localhost:5000", {
+const socket = io(import.meta.env.VITE_API_URL || "http://localhost:5000", {
   autoConnect: false,
   reconnection: true,
   reconnectionAttempts: Infinity,

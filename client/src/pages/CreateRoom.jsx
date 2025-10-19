@@ -193,7 +193,7 @@ const CreateRoom = () => {
 
       try {
         const doFetch = async (tok) =>
-          fetch("http://localhost:5000/api/room/create", {
+          fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/room/create`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
