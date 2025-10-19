@@ -284,7 +284,9 @@ const CreateRoom = () => {
     
     try {
       await navigator.clipboard.writeText(String(roomCode));
-    } catch {}
+    } catch (error) {
+      console.warn('Failed to copy to clipboard:', error);
+    }
     clearAllTimers();
 
     // Progressive change to underscores (left to right)
