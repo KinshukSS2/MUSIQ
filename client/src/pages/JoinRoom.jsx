@@ -149,7 +149,7 @@ export default function JoinRoom() {
 
     try {
       const doFetch = async (tok) =>
-  fetch("http://localhost:5000/api/room/join", {
+  fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/room/join`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
