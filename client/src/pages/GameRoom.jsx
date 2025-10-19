@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import socket from "../socket";
 import ColorThief from "colorthief";
 import Navbar from "../components/common/Navbar";
@@ -24,7 +24,7 @@ const GameRoom = () => {
     composer: 0,
     ai: 0,
   });
-  const [loadingNext, setLoadingNext] = useState(false);
+  const [_loadingNext, setLoadingNext] = useState(false);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [roundEnded, setRoundEnded] = useState(false);
   const [countdown, setCountdown] = useState(5);
@@ -33,7 +33,7 @@ const GameRoom = () => {
     composer: false,
     ai: false,
   });
-  const [currentSongDetails, setCurrentSongDetails] = useState(null);
+  const [_currentSongDetails, setCurrentSongDetails] = useState(null);
   const [showPlayButton, setShowPlayButton] = useState(false);
   const [isFirstRound, setIsFirstRound] = useState(true);
 
@@ -94,7 +94,7 @@ const GameRoom = () => {
     }
   }
 
-  const initBlobCanvas = () => {
+  const initBlobCanvas = useCallback(() => {
     const canvas = blobCanvasRef.current;
     if (!canvas) return () => {};
 
@@ -183,7 +183,7 @@ const GameRoom = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  };
+  }, []);
 
   const extractAlbumColors = (imageUrl) => {
     const img = new Image();
@@ -741,8 +741,8 @@ const GameRoom = () => {
 <span>
   {hintRevealed.movie
     ? song.movie
-        .replace(/\s*[\--]?\s*\(.*?(original motion picture soundtrack|ost|from.*?)\)/gi, "") // remove entire (Original Motion Picture Soundtrack)
-        .replace(/\s*[\--]?\s*(original motion picture soundtrack|ost|from.*)/gi, "") // fallback for non-parentheses versions
+        .replace(/\s*[--]?\s*\(.*?(original motion picture soundtrack|ost|from.*?)\)/gi, "") // remove entire (Original Motion Picture Soundtrack)
+        .replace(/\s*[--]?\s*(original motion picture soundtrack|ost|from.*)/gi, "") // fallback for non-parentheses versions
         .replace(/\s*\)+$/, "") // remove leftover closing parenthesis
         .trim()
     : "Hidden"}
