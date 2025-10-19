@@ -57,7 +57,7 @@ const TipTheDev = () => {
     setCustomAmount('');
   };
 
-  const handleCustomAmountChange = (e) => {
+  const _handleCustomAmountChange = (e) => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && parseInt(value) <= 50000) {
       setCustomAmount(value);
@@ -101,8 +101,8 @@ const TipTheDev = () => {
       name: "MusIQ - Tip the Dev",
       description: `Thanks for supporting MusIQ development! 🎵`,
       image: "/logo.png",
-      handler: function (response) {
-        handlePaymentSuccess(response, amount);
+      handler: function () {
+        handlePaymentSuccess();
       },
       prefill: {
         name: "Music Lover",
@@ -126,7 +126,7 @@ const TipTheDev = () => {
     paymentObject.open();
   };
 
-  const handlePaymentSuccess = async (response, amount) => {
+  const handlePaymentSuccess = async () => {
     await soundManager.init();
     soundManager.play('success');
     
@@ -222,7 +222,7 @@ const TipTheDev = () => {
               {/* Amount Selection */}
               <div className="mb-6">
                 <div className="grid grid-cols-2 gap-3 mb-4">
-                  {tipAmounts.map((tip, index) => (
+                  {tipAmounts.map((tip) => (
                     <button
                       key={tip.amount}
                       onClick={() => handleAmountSelect(tip.amount)}
