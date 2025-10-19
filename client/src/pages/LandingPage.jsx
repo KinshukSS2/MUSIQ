@@ -15,7 +15,7 @@ export default function LandingPage() {
     userData?.avatar || localStorage.getItem("userAvatar") || null
   );
   const [greeted, setGreeted] = useState(!!userData || (!!name && !!avatar));
-  const [isSignedUp, setIsSignedUp] = useState(!!userData);
+  const [isSignedUp, _setIsSignedUp] = useState(!!userData);
 
   useEffect(() => {
     if (name.trim()) localStorage.setItem("userName", name);
