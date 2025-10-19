@@ -43,11 +43,24 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('guest');
   };
 
+  const loginAsUser = (userData) => {
+    setUser(userData);
+    setAuthType('user');
+    setIsGuest(false);
+    setGuestName('');
+    setGuestAvatar('');
+  };
+
   const logout = () => {
     setUser(null);
     setAuthType('');
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userAvatar');
     logoutGuest(); // Also clears guest if any
+    
+    // Additional security: Clear any session storage
+    sessionStorage.clear();
   };
 
   return (
@@ -55,6 +68,7 @@ const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser,
+        loginAsUser,
         isGuest,
         guestName,
         guestAvatar,
