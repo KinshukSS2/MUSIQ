@@ -181,7 +181,7 @@ const CreateRoom = () => {
       const payload = {
         uid: storedUser.uid,
         name: storedUser.name,
-        avatar: storedUser.avatar || "https://i.imgur.com/placeholder.png",
+        avatar: storedUser.avatar || "/avatars/1.png",
         useSpotify,
         playlistId,
         players,
