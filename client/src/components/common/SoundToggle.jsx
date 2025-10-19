@@ -6,8 +6,8 @@ const SoundToggle = () => {
   const [soundEnabled, setSoundEnabled] = useState(soundManager.isEnabled());
 
   useEffect(() => {
-    // Initialize sound manager on component mount
-    soundManager.initOnUserInteraction();
+    // Just sync the initial state - don't initialize audio yet
+    setSoundEnabled(soundManager.isEnabled());
   }, []);
 
   const handleToggle = async () => {
