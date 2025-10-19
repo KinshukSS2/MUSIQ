@@ -1,20 +1,15 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const audioRef = useRef(null);
+  const _audioRef = useRef(null);
   const { user, isGuest, guestName, guestAvatar } = useContext(AuthContext);
 
   // Get user data from localStorage as fallback
   const userData = JSON.parse(localStorage.getItem("user") || "null");
   const userName = localStorage.getItem("userName");
-  console.log('Profile - User data:', user);
-  console.log('Profile - isGuest:', isGuest);
-  console.log('Profile - guestName:', guestName);
-  console.log('Profile - user displayName:', user?.displayName);
-  console.log('Profile - user email:', user?.email);
 
   // Music Player State
   const [currentTrack, setCurrentTrack] = useState({
@@ -26,7 +21,7 @@ const Profile = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+  const [autoplayEnabled, _setAutoplayEnabled] = useState(true);
 
   const languages = [
     { code: "all", label: "All Songs" },
@@ -39,7 +34,7 @@ const Profile = () => {
 
   const [selectedLanguage, setSelectedLanguage] = useState("all");
 
-  const playerStats = {
+  const _playerStats = {
     stat1: "24",
     stat2: "89%", 
     stat3: "156",
@@ -47,46 +42,47 @@ const Profile = () => {
   };
 
   // Fetch random track from database
-  const fetchRandomTrack = async (language = selectedLanguage, shouldAutoplay = autoplayEnabled) => {
+  const fetchRandomTrack = useCallback(async (language = selectedLanguage, shouldAutoplay = autoplayEnabled) => {
     setIsLoading(true);
     try {
       console.log('Fetching random song from database...');
       
-      const response = await fetch('http://localhost:5000/api/song/random');
-      console.log('Response status:', response.status);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/song/random`);
       
-      if (!response.ok) {
-        throw new Error(`Failed to fetch song: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('Fetched song:', data.song);
-      
-      if (data.song) {
-        setCurrentTrack({
-          name: data.song.song,
-          artist: data.song.composer || "Unknown Artist",
-          movie: data.song.movie || "",
-          videoId: data.song.videoId
-        });
-        console.log('Set track with videoId:', data.song.videoId);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched song from database:', data.song);
         
-        // Auto-start playing if requested
-        if (shouldAutoplay) {
-          setTimeout(() => {
-            const iframe = document.getElementById('youtube-player');
-            if (iframe && data.song.videoId) {
-              iframe.src = `https://www.youtube.com/embed/${data.song.videoId}?autoplay=1&enablejsapi=1`;
-              setIsPlaying(true);
-            }
-          }, 500);
+        if (data.song) {
+          setCurrentTrack({
+            name: data.song.song,
+            artist: data.song.composer || "Unknown Artist",
+            movie: data.song.movie || "",
+            videoId: data.song.videoId
+          });
+          console.log('Set track with videoId:', data.song.videoId);
+          
+          // Auto-start playing if requested
+          if (shouldAutoplay) {
+            setTimeout(() => {
+              const iframe = document.getElementById('youtube-player');
+              if (iframe && data.song.videoId) {
+                iframe.src = `https://www.youtube.com/embed/${data.song.videoId}?autoplay=1&enablejsapi=1`;
+                setIsPlaying(true);
+              }
+            }, 500);
+          }
+          return; // Exit early if we successfully got a song from database
         }
+      } else {
+        console.log('No songs in database, using demo tracks');
       }
       
     } catch (error) {
-      console.error('Error fetching track:', error);
+      console.log('Database fetch failed, using demo tracks:', error.message);
+    }
       
-      // Fallback with demo tracks organized by language - All tested and working
+    // Fallback with demo tracks organized by language - All tested and working
       const demoTracksByLanguage = {
         all: [
           { name: "Tum Hi Ho", artist: "Arijit Singh", movie: "Aashiqui 2", videoId: "Umqb9KENgmk" },
@@ -150,9 +146,9 @@ const Profile = () => {
           }
         }, 500);
       }
-    }
+    
     setIsLoading(false);
-  };
+  }, [selectedLanguage, autoplayEnabled]);
 
   // Audio controls using YouTube embed (same as GameRoom)
   const togglePlay = () => {
@@ -187,7 +183,7 @@ const Profile = () => {
   };
 
   // Handle song end and autoplay next
-  const handleSongEnd = () => {
+  const _handleSongEnd = () => {
     if (autoplayEnabled) {
       console.log("Song ended, playing next track...");
       fetchRandomTrack(selectedLanguage, true);
@@ -225,7 +221,7 @@ const Profile = () => {
   // Load initial track with autoplay
   useEffect(() => {
     fetchRandomTrack(selectedLanguage, true);
-  }, []);
+  }, [fetchRandomTrack, selectedLanguage]);
 
   return (
     <div className="h-screen text-white font-silkscreen relative overflow-hidden" style={{
@@ -291,9 +287,9 @@ const Profile = () => {
               }}
             />
             <h2 className="text-2xl font-bold text-[#FFFB00] mt-4 mb-2">
-              {user?.displayName || user?.email?.split('@')[0] || guestName || userData?.name || userName || "Guest Player"}
+              {user?.name || user?.displayName || user?.email?.split('@')[0] || guestName || userData?.name || userName || "Guest Player"}
             </h2>
-            <p className="text-gray-400 text-sm">Level 47 • {user?.displayName || user?.email?.split('@')[0] || guestName || userData?.name || userName || "Music Enthusiast"}</p>
+            <p className="text-gray-400 text-sm">Level 47 • {user?.name || user?.displayName || user?.email?.split('@')[0] || guestName || userData?.name || userName || "Music Enthusiast"}</p>
           </div>
 
           {/* Music Player - Cassette at top position */}
@@ -528,7 +524,7 @@ const Profile = () => {
       </div>
 
       {/* Custom Styles */}
-      <style jsx>{`
+      <style jsx="true">{`
         .pixelated {
           image-rendering: pixelated;
           image-rendering: -moz-crisp-edges;

@@ -90,8 +90,8 @@ const TipTheDev = () => {
       name: "MusIQ - Tip the Dev",
       description: `Thanks for supporting MusIQ development! 🎵`,
       image: "/logo.png",
-      handler: function (response) {
-        handlePaymentSuccess(response, amount);
+      handler: function () {
+        handlePaymentSuccess();
       },
       prefill: {
         name: "Music Lover",
@@ -115,7 +115,7 @@ const TipTheDev = () => {
     paymentObject.open();
   };
 
-  const handlePaymentSuccess = async (response, amount) => {
+  const handlePaymentSuccess = async () => {
     await soundManager.init();
     soundManager.play('success');
     
