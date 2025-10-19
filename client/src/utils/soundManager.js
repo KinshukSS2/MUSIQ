@@ -7,16 +7,53 @@ class SoundManager {
     this.initialized = false;
   }
 
-  // Initialize Web Audio API
+  // Initialize Web Audio API - only called after user interaction
   async init() {
-    if (this.initialized) return;
+    if (this.initialized || !this.enabled) return;
     
     try {
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      await this.createSounds();
-      this.initialized = true;
+      // Don't create AudioContext here - let initOnUserInteraction handle it
+      if (!this.audioContext) {
+        console.log('AudioContext not created yet - waiting for user interaction');
+        return;
+      }
+      
+      // Only proceed if AudioContext is running
+      if (this.audioContext.state === 'running') {
+        await this.createSounds();
+        this.initialized = true;
+      }
     } catch (error) {
       console.warn('Audio not supported:', error);
+    }
+  }
+
+  // Initialize audio on user interaction (required by browser autoplay policies)
+  async initOnUserInteraction() {
+    if (!this.enabled) return;
+    
+    // Only proceed if this is called from an actual user event
+    // We'll create the context but be very careful about when we try to use it
+    try {
+      if (!this.audioContext) {
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // If the context starts in suspended state, we need a real user gesture
+        if (this.audioContext.state === 'suspended') {
+          // Don't try to resume here - let the actual play methods handle it
+          return;
+        }
+      }
+      
+      // Only initialize if context is actually running (means we have user gesture)
+      if (this.audioContext.state === 'running' && !this.initialized) {
+        await this.createSounds();
+        this.initialized = true;
+        console.log('Audio initialized successfully');
+      }
+    } catch (error) {
+      // Silently handle errors to avoid console spam from autoplay policy
+      return;
     }
   }
 
@@ -306,7 +343,30 @@ class SoundManager {
   }
 
   async play(soundName) {
-    if (!this.enabled || !this.initialized) return;
+    if (!this.enabled) return;
+
+    // Ensure AudioContext is ready for user interaction
+    await this.initOnUserInteraction();
+    
+    if (!this.audioContext) return;
+
+    // Try to resume AudioContext if suspended (user gesture required)
+    if (this.audioContext.state === 'suspended') {
+      try {
+        await this.audioContext.resume();
+        
+        // Initialize sounds if not done yet and context is now running
+        if (!this.initialized && this.audioContext.state === 'running') {
+          await this.createSounds();
+          this.initialized = true;
+        }
+      } catch (error) {
+        // Can't resume without user gesture - silently return
+        return;
+      }
+    }
+    
+    if (!this.initialized || this.audioContext.state !== 'running') return;
 
     try {
       if (!this.sounds[soundName]) {
@@ -325,7 +385,30 @@ class SoundManager {
 
   // Play telephone dial sound for specific digit
   async playDigit(digit) {
-    if (!this.enabled || !this.initialized) return;
+    if (!this.enabled) return;
+
+    // Ensure AudioContext is ready for user interaction
+    await this.initOnUserInteraction();
+    
+    if (!this.audioContext) return;
+
+    // Try to resume AudioContext if suspended (user gesture required)
+    if (this.audioContext.state === 'suspended') {
+      try {
+        await this.audioContext.resume();
+        
+        // Initialize sounds if not done yet and context is now running
+        if (!this.initialized && this.audioContext.state === 'running') {
+          await this.createSounds();
+          this.initialized = true;
+        }
+      } catch (error) {
+        // Can't resume without user gesture - silently return
+        return;
+      }
+    }
+    
+    if (!this.initialized || this.audioContext.state !== 'running') return;
 
     try {
       if (!this.sounds.phoneDial || !this.sounds.phoneDial[digit]) {
@@ -358,13 +441,6 @@ class SoundManager {
   // Check if sounds are enabled
   isEnabled() {
     return this.enabled;
-  }
-
-  // Initialize on user interaction
-  async initOnUserInteraction() {
-    if (!this.initialized) {
-      await this.init();
-    }
   }
 }
 
