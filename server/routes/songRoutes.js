@@ -11,7 +11,11 @@ router.get("/random", async (req, res) => {
     const count = await Song.countDocuments({ videoId: { $exists: true, $ne: null } });
     
     if (count === 0) {
-      return res.status(404).json({ message: "No songs available" });
+      return res.status(200).json({ 
+        message: "No songs in database", 
+        song: null,
+        useDemoTracks: true 
+      });
     }
 
     // Get a random song
