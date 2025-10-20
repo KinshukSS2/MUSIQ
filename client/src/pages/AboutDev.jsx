@@ -162,7 +162,9 @@ const AboutDev = () => {
                
               </div>
             <a
-              href="/tip-the-dev"
+              href="https://buymeacoffee.com/musiq"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto bg-[#FFFB00] text-black font-bold px-6 sm:px-8 py-3 rounded-lg hover:bg-black hover:text-[#FFFB00] border-2 border-transparent hover:border-[#FFFB00] transition-all duration-300 text-center flex items-center justify-center gap-3 coffee-button"
             >
               <img src="/coffee-icon.svg" alt="Buy me a coffee" className="w-6 h-6" />
