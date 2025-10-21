@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import socket from "../socket";
 import ColorThief from "colorthief";
 import Navbar from "../components/common/Navbar";
 
 
 const GameRoom = () => {
+  const navigate = useNavigate();
   const [song, setSong] = useState(null);
   const [guess, setGuess] = useState("");
   const [chat, setChat] = useState([]);
@@ -520,13 +522,13 @@ const GameRoom = () => {
 
           <div className="mt-8 flex gap-6">
             <button
-              onClick={() => window.location.href = '/landing'}
+              onClick={() => navigate('/landing')}
               className="border-2 border-[#FFFB00] text-[#FFFB00] font-bold py-3 px-6 hover:bg-[#FFFB00] hover:text-black transition-all duration-300 font-silkscreen tracking-[0.1em] text-sm hover:scale-105"
             >
               GO TO HOME
             </button>
             <button
-              onClick={() => window.location.href = '/create-room'}
+              onClick={() => navigate('/create-room')}
               className="bg-[#FFFB00] text-black font-bold py-3 px-6 hover:bg-yellow-300 transition-all duration-300 font-silkscreen tracking-[0.1em] text-sm hover:scale-105"
             >
               PLAY AGAIN
