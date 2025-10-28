@@ -17,6 +17,7 @@ export default function Navbar() {
     { label: "New Room", path: "/create-room" },
     { label: "About Dev", path: "/about" },
     { label: "How to Play", path: "/how-to-play" },
+    {label:"Damage",path:"/construction"}
   ];
 
   const isActive = (path) => location.pathname === path;

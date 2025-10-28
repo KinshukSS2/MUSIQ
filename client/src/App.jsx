@@ -14,6 +14,8 @@ import HomePage from './pages/HomePage';
 import AboutDev from './pages/AboutDev';
 import TipTheDev from './pages/TipTheDev';
 import SoundToggle from './components/common/SoundToggle';
+import { Construction } from "lucide-react";
+// import { Damage } from "./pages/damage";
 
 function App() {
   return (
@@ -78,6 +80,12 @@ function InnerApp() {
             <TipTheDev />
           </ProtectedRoute>
         } />
+         {/* <Route path="/damage" element={
+          <ProtectedRoute>
+            <Damage />
+          </ProtectedRoute>
+        } /> */}
+
       </Routes>
       
       {/* Global Sound Toggle */}
