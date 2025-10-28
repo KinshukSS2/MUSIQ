@@ -12,7 +12,7 @@ import Profile from "./pages/Profile";
 import HowToPlay from "./pages/HowToPlay";
 import HomePage from './pages/HomePage';
 import AboutDev from './pages/AboutDev';
-import TipTheDev from './pages/TipTheDev';
+// import TipTheDev from './pages/TipTheDev';
 import SoundToggle from './components/common/SoundToggle';
 import Damage  from "./pages/damage";
 
@@ -75,11 +75,11 @@ function InnerApp() {
             <Profile />
           </ProtectedRoute>
         } />
-        <Route path="/tip-the-dev" element={
+        {/* <Route path="/tip-the-dev" element={
           <ProtectedRoute>
             <TipTheDev />
           </ProtectedRoute>
-        } />
+        } /> */}
          
 
       </Routes>
