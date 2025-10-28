@@ -227,7 +227,7 @@ const Profile = () => {
     <div className="h-screen text-white font-silkscreen relative overflow-hidden" style={{
       backgroundImage: 'url(/profilebackground.png)',
       backgroundRepeat: 'repeat',
-      backgroundSize: '120px 120px',
+      backgroundSize: '1700px 1700px',
       imageRendering: 'pixelated',
       backgroundAttachment: 'fixed'
     }}>
