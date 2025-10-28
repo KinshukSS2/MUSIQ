@@ -14,8 +14,7 @@ import HomePage from './pages/HomePage';
 import AboutDev from './pages/AboutDev';
 import TipTheDev from './pages/TipTheDev';
 import SoundToggle from './components/common/SoundToggle';
-import { Construction } from "lucide-react";
-// import { Damage } from "./pages/damage";
+import Damage  from "./pages/damage";
 
 function App() {
   return (
@@ -43,6 +42,7 @@ function InnerApp() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/how-to-play" element={<HowToPlay />} />
         <Route path="/about" element={<AboutDev />} />
+        <Route path="/construction" element={<Damage />} />
         
         {/* Protected Routes - Require Authentication */}
         <Route path="/landing" element={
@@ -80,11 +80,7 @@ function InnerApp() {
             <TipTheDev />
           </ProtectedRoute>
         } />
-         {/* <Route path="/damage" element={
-          <ProtectedRoute>
-            <Damage />
-          </ProtectedRoute>
-        } /> */}
+         
 
       </Routes>
       
