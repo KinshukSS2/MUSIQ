@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Navbar from "../components/common/Navbar";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -224,6 +225,7 @@ const Profile = () => {
   }, [fetchRandomTrack, selectedLanguage]);
 
   return (
+    <div><Navbar/>
     <div className="h-screen text-white font-silkscreen relative overflow-hidden" style={{
       backgroundImage: 'url(/profilebackground.png)',
       backgroundRepeat: 'repeat',
@@ -254,7 +256,7 @@ const Profile = () => {
       <div className="absolute inset-0 bg-black/75 z-0"></div>
       
       {/* Top Bar */}
-      <div className="relative z-10 flex justify-between items-center px-6 py-3">
+      {/* <div className="relative z-10 flex justify-between items-center px-6 py-3">
         <div className="flex items-center space-x-3">
           <img src="/logo.png" alt="MusIQ" className="w-8 h-8" />
           <div className="font-bold text-lg">
@@ -267,7 +269,7 @@ const Profile = () => {
             className="w-6 h-6 bg-[#FFFB00] rounded flex items-center justify-center hover:bg-yellow-300 transition-colors text-black font-bold"
           >×</button>
         </div>
-      </div>
+      </div> */}
 
       <div className="relative z-10 flex h-full">
         {/* Left Column - Larger and Full Height */}
@@ -566,6 +568,7 @@ const Profile = () => {
           scroll-behavior: smooth;
         }
       `}</style>
+    </div>
     </div>
   );
 };
