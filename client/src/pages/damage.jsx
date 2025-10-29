@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/common/Navbar";
 
 const Damage= () => {
   const navigate = useNavigate();
@@ -58,6 +59,9 @@ const Damage= () => {
   };
 
   return (
+    <div>
+      {/* Navbar */}
+      <Navbar />
     <div className="relative min-h-screen bg-black text-white font-silkscreen overflow-hidden">
       {/* faint background tapes behind the text */}
       <TapeBand top="12%" angle={-8} speed={24} opacity={0.08} z={0} />
@@ -126,6 +130,7 @@ const Damage= () => {
           text-shadow: 0 0 12px rgba(255,251,0,0.85);
         }
       `}</style>
+    </div>
     </div>
   );
 };
