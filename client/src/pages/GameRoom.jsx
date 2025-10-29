@@ -539,8 +539,8 @@ const GameRoom = () => {
         <style jsx>{`
           .retro-grid {
             background-image: 
-              linear-gradient(rgba(255, 251, 0, 0.05) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 251, 0, 0.05) 1px, transparent 1px);
+              linear-gradient(rgba(136, 134, 9, 0.05) 1px, transparent 25px),
+              linear-gradient(90deg, rgba(255, 251, 0, 0.05) 1px, transparent 25px);
             background-size: 40px 40px;
             position: absolute;
             top: 0;
