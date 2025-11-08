@@ -18,11 +18,16 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         // User is signed in with Firebase
+        // Check if we have existing user data with avatar
+        const existingUser = JSON.parse(localStorage.getItem('user'));
+        
         const userData = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
+          name: existingUser?.name || firebaseUser.displayName || firebaseUser.email,
           displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
+          avatar: existingUser?.avatar || '', // Preserve the avatar if exists
         };
         setUser(userData);
         setAuthType('user');
