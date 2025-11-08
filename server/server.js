@@ -21,7 +21,8 @@ const server = http.createServer(app);
 const allowedOrigins = [
   'http://localhost:5173',  // Development
   'http://localhost:3000',  // Alternative dev port
-  process.env.FRONTEND_URL  // Production frontend URL
+  'https://musiq-uni.vercel.app',  // Production Vercel frontend
+  process.env.FRONTEND_URL  // Additional production URL from env
 ].filter(Boolean); // Remove undefined values
 const io = new Server(server, {
   cors: {
