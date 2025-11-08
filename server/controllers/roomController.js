@@ -1,6 +1,5 @@
 import Room from "../models/Room.js";
 import Song from "../models/Song.js";
-import { generateRoomCode } from "../utils/generateCode.js";
 import { getSpotifyAccessToken } from "../utils/getSpotifyAccessToken.js";
 import { getSongsFromSpotifyPlaylist } from "../utils/fillPlaylistFromSpotify.js";
 
@@ -14,7 +13,6 @@ export const createRoom = async (req, res) => {
     code,
     rounds,
     duration,
-    languages,
     rules
   } = req.body;
 

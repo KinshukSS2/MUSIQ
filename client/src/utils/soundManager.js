@@ -51,7 +51,7 @@ class SoundManager {
         this.initialized = true;
         console.log('Audio initialized successfully');
       }
-    } catch (error) {
+    } catch {
       // Silently handle errors to avoid console spam from autoplay policy
       return;
     }
@@ -360,7 +360,7 @@ class SoundManager {
           await this.createSounds();
           this.initialized = true;
         }
-      } catch (error) {
+      } catch {
         // Can't resume without user gesture - silently return
         return;
       }
@@ -402,7 +402,7 @@ class SoundManager {
           await this.createSounds();
           this.initialized = true;
         }
-      } catch (error) {
+      } catch {
         // Can't resume without user gesture - silently return
         return;
       }
