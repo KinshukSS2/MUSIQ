@@ -32,6 +32,7 @@ export async function getSpotifyAccessToken() {
     expiresAt = now + (data.expires_in * 1000) - 60000;
     return cachedToken;
   } else {
-    throw new Error("Failed to fetch Spotify access token");
+    console.error("Spotify API Error:", data);
+    throw new Error(`Failed to fetch Spotify access token: ${data.error_description || data.error}`);
   }
 }
