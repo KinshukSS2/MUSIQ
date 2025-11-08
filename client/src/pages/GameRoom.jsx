@@ -278,9 +278,10 @@ const GameRoom = () => {
 
     socket.on("correct-guess", ({ user: guesser }) => {
       const isCurrentUser = guesser.uid === user.uid;
+      const guesserName = guesser.name || guesser.displayName || 'Someone';
       setChat((prev) => [
         ...prev,
-        { system: true, type: "crct-guess", text: `✅ ${guesser.name} guessed it right!` },
+        { system: true, type: "crct-guess", text: `✅ ${guesserName} guessed it right!` },
       ]);
 
       if (isCurrentUser) {
