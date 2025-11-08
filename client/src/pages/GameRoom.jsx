@@ -185,6 +185,7 @@ const GameRoom = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const extractAlbumColors = (imageUrl) => {
@@ -379,6 +380,7 @@ const GameRoom = () => {
       socket.emit("leave-room", { roomCode, user });
       cleanupBlobCanvas();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomCode, user, isFirstRound]);
 
   useEffect(() => {
