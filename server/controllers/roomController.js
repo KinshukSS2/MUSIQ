@@ -23,10 +23,19 @@ export const createRoom = async (req, res) => {
     let playlist = [];
 
     if (useSpotify && playlistId) {
-      const accessToken = await getSpotifyAccessToken();
-      playlist = await getSongsFromSpotifyPlaylist(playlistId, accessToken,rounds);
+      try {
+        console.log("Attempting to fetch Spotify playlist...");
+        const accessToken = await getSpotifyAccessToken();
+        playlist = await getSongsFromSpotifyPlaylist(playlistId, accessToken, rounds);
+        console.log("Successfully fetched Spotify playlist");
+      } catch (spotifyError) {
+        console.error("Spotify error:", spotifyError.message);
+        console.log("Falling back to database songs...");
+        playlist = await Song.aggregate([{ $sample: { size: rounds || 10 } }]);
+      }
     } else {
-      playlist = await Song.aggregate([{ $sample: { size: 10 } }]);
+      console.log("Using database songs...");
+      playlist = await Song.aggregate([{ $sample: { size: rounds || 10 } }]);
     }
 
     const newRoom = new Room({
