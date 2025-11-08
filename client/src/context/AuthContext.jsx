@@ -1,4 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
@@ -9,23 +11,42 @@ const AuthProvider = ({ children }) => {
   const [guestName, setGuestName] = useState('');
   const [guestAvatar, setGuestAvatar] = useState('');
   const [authType, setAuthType] = useState(''); // 'user' | 'guest' | ''
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    // Load Firebase user if exists
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-      setAuthType('user');
-    }
+    // Listen to Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // User is signed in with Firebase
+        const userData = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+        };
+        setUser(userData);
+        setAuthType('user');
+        localStorage.setItem('user', JSON.stringify(userData));
+      } else {
+        // No Firebase user, check for guest
+        const storedGuest = JSON.parse(localStorage.getItem('guest'));
+        if (storedGuest && storedGuest.name) {
+          setIsGuest(true);
+          setGuestName(storedGuest.name);
+          setGuestAvatar(storedGuest.avatar || '');
+          setAuthType('guest');
+        } else {
+          // No user at all
+          setUser(null);
+          setAuthType('');
+          localStorage.removeItem('user');
+        }
+      }
+      setLoading(false);
+    });
 
-    // Load guest data if exists
-    const storedGuest = JSON.parse(localStorage.getItem('guest'));
-    if (storedGuest && storedGuest.name) {
-      setIsGuest(true);
-      setGuestName(storedGuest.name);
-      setGuestAvatar(storedGuest.avatar || '');
-      setAuthType('guest');
-    }
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
 
   const loginAsGuest = (name, avatar) => {
@@ -52,16 +73,24 @@ const AuthProvider = ({ children }) => {
     setGuestAvatar('');
   };
 
-  const logout = () => {
-    setUser(null);
-    setAuthType('');
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userAvatar');
-    logoutGuest(); // Also clears guest if any
-    
-    // Additional security: Clear any session storage
-    sessionStorage.clear();
+  const logout = async () => {
+    try {
+      // Sign out from Firebase
+      await signOut(auth);
+      
+      // Clear local state
+      setUser(null);
+      setAuthType('');
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userAvatar');
+      logoutGuest(); // Also clears guest if any
+      
+      // Additional security: Clear any session storage
+      sessionStorage.clear();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -77,9 +106,10 @@ const AuthProvider = ({ children }) => {
         loginAsGuest,
         logoutGuest,
         logout,
+        loading, // Expose loading state
       }}
     >
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
