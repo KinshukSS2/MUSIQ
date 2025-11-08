@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, isGuest, authType } = useContext(AuthContext);
+  const { authType } = useContext(AuthContext);
   const location = useLocation();
 
   // Check if user is authenticated (either Firebase user or guest)
