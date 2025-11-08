@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/common/Navbar";
 
 const Profile = () => {
-  const navigate = useNavigate();
   const _audioRef = useRef(null);
   const { user, isGuest, guestName, guestAvatar } = useContext(AuthContext);
 
