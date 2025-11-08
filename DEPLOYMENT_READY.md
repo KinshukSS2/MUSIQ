@@ -60,16 +60,19 @@ Your `netlify.toml` is already configured. To deploy:
 
 ### **Backend Deployment Options**
 
-#### **Option 1: Render.com (Recommended)**
+#### **Option 1: Render.com (Recommended) - Using render.yaml**
 
-1. **Create a new Web Service on Render**
-2. **Connect your GitHub repository**
-3. **Configure build settings:**
-   - Root Directory: `server`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
+✅ **A `render.yaml` file has been created and pushed to your repository!**
 
-4. **Set Environment Variables:**
+1. **Go to Render Dashboard** (https://dashboard.render.com)
+2. **Click "New +" → "Blueprint"**
+3. **Connect your GitHub repository:** `KinshukSS2/MUSIQ`
+4. **Render will automatically detect the `render.yaml` file**
+5. **Click "Apply"** and Render will create the service
+
+6. **Set Environment Variables** (Required - not stored in render.yaml for security):
+   - Go to your service → Environment
+   - Add the following variables:
    ```
    MONGO_URI=your_mongodb_atlas_uri
    PORT=5000
