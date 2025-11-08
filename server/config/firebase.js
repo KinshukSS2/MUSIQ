@@ -36,7 +36,7 @@ export const verifyFirebaseToken = async (req, res, next) => {
     const decoded = await admin.auth().verifyIdToken(token);
     req.uid = decoded.uid;
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 };
