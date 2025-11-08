@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import axios from "axios";
-import mongoose from "mongoose";
 import Song from "../models/Song.js";
 import connectDB from "../config/db.js";
 
