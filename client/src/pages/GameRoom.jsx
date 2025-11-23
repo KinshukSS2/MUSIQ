@@ -507,7 +507,7 @@ const GameRoom = () => {
                     </div>
                     <div>
                       <span className={`font-silkscreen text-base tracking-wide ${p.uid === user.uid ? "text-[#FFFB00]" : "text-white"}`}>
-                        {p.name.toUpperCase()}
+                        {(p.name || p.displayName || 'Player').toUpperCase()}
                       </span>
                       {p.uid === user.uid && (
                         <div className="text-xs text-[#FFFB00] font-silkscreen tracking-wide">(YOU)</div>
@@ -596,7 +596,7 @@ const GameRoom = () => {
                           p.uid === user.uid ? "text-[#FFFB00] font-bold" : "text-white"
                         }`}
                       >
-                        {p.name}
+                        {p.name || p.displayName || 'Player'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -804,7 +804,7 @@ const GameRoom = () => {
                 ? message.text
                 : (
                   <span>
-                    <span className="font-silkscreen text-[#FFFB00]">{message.user?.name}:</span>
+                    <span className="font-silkscreen text-[#FFFB00]">{message.user?.name || message.user?.displayName || 'Player'}:</span>
                     <span className="ml-2">{message.text}</span>
                   </span>
                 )}
