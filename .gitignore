@@ -4,6 +4,7 @@
 .DS_Store
 .env
 *.log
+RENDER_ENV_VARS.md
 
 # ------------------
 # Client ignores
