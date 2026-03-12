@@ -9,7 +9,7 @@
 
 ---
 
-## 🎵 Overview
+##  Overview
 
 **MusIQ** is a full-stack real-time multiplayer music guessing game where players compete to identify songs as quickly as possible.  
 It integrates **Spotify**, **YouTube**, and **AI-powered hints** for a dynamic and engaging experience.  
@@ -18,21 +18,21 @@ Players can join rooms, chat, and earn points in real time — all within a mode
 
 ---
 
-## 🚀 Features
+##  Features
 
-- 🎧 **Spotify Playlist Integration** – Source songs from Spotify playlists  
-- ▶️ **YouTube Audio Streaming** – Stream tracks directly from YouTube  
-- 🤖 **AI-Powered Hints** – Get hints powered by Gemini/OpenAI  
-- ⚡ **Real-Time Guessing & Chat** – Powered by Socket.IO  
-- 🔍 **Typo-Tolerant Matching** – Implemented via Fuse.js  
-- 🔐 **Secure Authentication** – Using Firebase Authentication  
-- 💻 **Modern Frontend Stack** – Built with React + Vite + Tailwind CSS  
-- 🏆 **Live Leaderboard** – Real-time score tracking  
-- 🌐 **Scalable Backend** – Node.js, Express.js, MongoDB Atlas  
+-  **Spotify Playlist Integration** – Source songs from Spotify playlists  
+-  **YouTube Audio Streaming** – Stream tracks directly from YouTube  
+-  **AI-Powered Hints** – Get hints powered by Gemini/OpenAI  
+-  **Real-Time Guessing & Chat** – Powered by Socket.IO  
+-  **Typo-Tolerant Matching** – Implemented via Fuse.js  
+-  **Secure Authentication** – Using Firebase Authentication  
+-  **Modern Frontend Stack** – Built with React + Vite + Tailwind CSS  
+-  **Live Leaderboard** – Real-time score tracking  
+-  **Scalable Backend** – Node.js, Express.js, MongoDB Atlas  
 
 ---
 
-## 🧠 Tech Stack
+## Tech Stack
 
 ### **Frontend**
 - React + Vite  
@@ -51,7 +51,7 @@ Players can join rooms, chat, and earn points in real time — all within a mode
 
 ---
 
-## ☁️ Deployment
+##  Deployment
 
 | Component | Default Port | Suggested Hosting |
 |------------|--------------|-------------------|
@@ -61,9 +61,9 @@ Players can join rooms, chat, and earn points in real time — all within a mode
 
 ---
 
-## 🛠️ Local Development
+##  Local Development
 
-### **1️⃣ Prerequisites**
+###  Prerequisites
 - Node.js 18+ and npm (or yarn/pnpm)
 - MongoDB (local or Atlas)
 - Firebase project (for authentication)
@@ -74,7 +74,7 @@ Players can join rooms, chat, and earn points in real time — all within a mode
 
 ---
 
-### **2️⃣ Clone the Repository**
+###  Clone the Repository
 ```bash
 git clone <your-fork-or-repo-url>
 cd MusIQ
