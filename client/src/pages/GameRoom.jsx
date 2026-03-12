@@ -228,6 +228,10 @@ const GameRoom = () => {
     const cleanupBlobCanvas = initBlobCanvas();
 
     socket.on("start-round", ({ song, round, duration, players }) => {
+      if (!song) {
+        console.error("start-round received with undefined song. Check if playlist is empty.");
+        return;
+      }
       setSong(song);
       setCurrentSongDetails(song);
       setRound(round);
@@ -250,7 +254,7 @@ const GameRoom = () => {
         setShowPlayButton(true);
       }
 
-      if (song.cover) {
+      if (song?.cover) {
         extractAlbumColors(song.cover);
       }
 
@@ -346,6 +350,11 @@ const GameRoom = () => {
 
     socket.on("loading-next-round", () => {
       setLoadingNext(true);
+    });
+
+    socket.on("error", ({ message }) => {
+      console.error("Socket error from server:", message);
+      alert(`Game error: ${message}`);
     });
 
     socket.on("round-ended", () => {

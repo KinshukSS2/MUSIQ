@@ -155,6 +155,11 @@ const startRound = async (roomCode, io) => {
     await room.save();
 
     const song = room.playlist[room.currentSongIndex];
+    if (!song) {
+      console.error(`[startRound] No song at index ${room.currentSongIndex} for room ${roomCode}. Playlist length: ${room.playlist.length}`);
+      io.to(roomCode).emit("error", { message: "No song found for this round. Playlist may be empty." });
+      return;
+    }
     io.to(roomCode).emit("start-round", {
       round: room.currentRound,
       song,
