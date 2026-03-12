@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
 import Song from './models/Song.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const checkSongs = async () => {
   try {
-    await mongoose.connect('mongodb+srv://kinshuk:kinshuk2005@cluster0.h77u8.mongodb.net/musiq?retryWrites=true&w=majority&appName=Cluster0');
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
     
     const songs = await Song.find({}).limit(5);
