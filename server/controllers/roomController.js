@@ -2,6 +2,7 @@ import Room from "../models/Room.js";
 import Song from "../models/Song.js";
 import { getSpotifyAccessToken } from "../utils/getSpotifyAccessToken.js";
 import { getSongsFromSpotifyPlaylist } from "../utils/fillPlaylistFromSpotify.js";
+import { demoPlaylist } from "../data/demoPlaylist.js";
 
 export const createRoom = async (req, res) => {
   const {
@@ -36,6 +37,13 @@ export const createRoom = async (req, res) => {
     } else {
       console.log("Using database songs...");
       playlist = await Song.aggregate([{ $sample: { size: rounds || 10 } }]);
+    }
+
+    // Final fallback: use demo playlist if we still have no songs
+    if (!playlist || playlist.length === 0) {
+      console.log("No songs found, using demo playlist...");
+      const shuffled = demoPlaylist.sort(() => Math.random() - 0.5);
+      playlist = shuffled.slice(0, rounds || 10);
     }
 
     const newRoom = new Room({
