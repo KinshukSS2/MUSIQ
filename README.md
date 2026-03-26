@@ -74,7 +74,3 @@ Players can join rooms, chat, and earn points in real time — all within a mode
 
 ---
 
-###  Clone the Repository
-```bash
-git clone <your-fork-or-repo-url>
-cd MusIQ
